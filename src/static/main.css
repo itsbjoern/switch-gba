@@ -1,0 +1,50 @@
+html, body {
+    height: 90%;
+    max-height: 90%;
+}
+
+body {
+    background-color: #252227;
+}
+
+.controls {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    padding: 3px;
+}
+
+.game {
+    float: left;
+}
+
+#canvas {
+    padding: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    position: absolute;
+    height: 635px;
+}
+
+.message-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 250px;
+    padding: 3px;
+    background:#D3D3D3;
+    height: 90%;
+}
+
+.messages {
+    height: 90%;
+    overflow: scroll;
+    background: #fff;
+}
+
+#backCapture {
+    visibility: hidden;
+}

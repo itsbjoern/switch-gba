@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Crowdsourced Gameboy Advanced</title>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" type="text/css" href="/static/main.css">
+        <script type="text/javascript" src="/static/index.js"></script>
+    </head>
+    <body>
+        <div class="controls">
+            <button tabindex="-1" onclick="location.reload();">Reload page</button>
+        </div>
+        <div class="game">
+          <canvas id="canvas"></canvas>
+          <iframe id="backCapture" src="frame"></iframe>
+        </div>
+        <div class="message-container">
+            <h2>Game</h2>
+            <button id="dummy"></button>
+            <div class="messages" id="commands"></div>
+        </div>
+    </body>
+</html>

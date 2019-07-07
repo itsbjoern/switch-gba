@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+  <body onload="init();">
+    <script>
+      function init() {
+        if (location.href.split("?").length !== 1) {
+          window.parent.postMessage("redirected", "*")
+        } else {
+          window.parent.postMessage("loaded", "*")
+        }
+      }
+    </script>
+  </body>
+</html>
