@@ -1,16 +1,4 @@
 var SIZE_MODIFIER = 2;
-// var KEY_MAP = {
-//   88: 0, // a
-//   90: 1, // b
-//   8:  2, // select
-//   13: 3, // start
-//   39: 4, // right
-//   37: 5, // left
-//   38: 6, // up
-//   40: 7, // down
-//   83: 8, // r
-//   65: 9, // l
-// };
 
 var KEY_MAP = {
   32: 0, // a
@@ -19,6 +7,10 @@ var KEY_MAP = {
   37: 5, // left
   38: 6, // up
   40: 7, // down
+  8:  2, // select
+  13: 3, // start
+  83: 8, // r
+  65: 9, // l
 };
 
 // Capture switch browser to disable accidental unload
@@ -47,7 +39,8 @@ var ws = new WebSocket('ws://' + window.location.host + '/ws');
 var connected = false;
 
 document.addEventListener('DOMContentLoaded', onLoad);
-document.addEventListener('keydown', onKey);
+document.addEventListener('keydown', onKeyDown);
+document.addEventListener('keyup', onKeyUp);
 document.addEventListener("mousemove", mouseMove);
 
 function onLoad(event) {
@@ -109,9 +102,25 @@ function displayMessage(message) {
   }
 }
 
+function onVirtualKey(key) {
+  onKey({keyCode: key});
+}
+
 function onKey(event) {
   if (KEY_MAP[event.keyCode] !== undefined) {
     ws.send(KEY_MAP[event.keyCode]);
+  }
+}
+
+function onKeyDown(event) {
+  if (KEY_MAP[event.keyCode] !== undefined) {
+    ws.send("down-" + KEY_MAP[event.keyCode]);
+  }
+}
+
+function onKeyUp(event) {
+  if (KEY_MAP[event.keyCode] !== undefined) {
+    ws.send("up-" + KEY_MAP[event.keyCode]);
   }
 }
 

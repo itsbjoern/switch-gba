@@ -16,7 +16,7 @@ class Server:
 
     # mapping of keynames that the client will use
     KEYMAP = {GBA.KEY_A: 'a', GBA.KEY_B: 'b', GBA.KEY_SELECT: 'select', GBA.KEY_START: 'start', GBA.KEY_RIGHT: 'right',
-              GBA.KEY_LEFT: 'left', GBA.KEY_UP: 'up', GBA.KEY_DOWN: 'down', GBA.KEY_RIGHT: 'r', GBA.KEY_LEFT: 'l'}
+              GBA.KEY_LEFT: 'left', GBA.KEY_UP: 'up', GBA.KEY_DOWN: 'down', GBA.KEY_R: 'r', GBA.KEY_L: 'l'}
 
     def __init__(self):
         self._settings = dict(
@@ -58,13 +58,23 @@ class Server:
                 self.write_message({ 'event': 'all logs', 'data': Server.all_logs.get_k_recent(buffer_index) })
 
 
-        def on_message(self, key):
+        def on_message(self, msg):
             if Server.core is None:
                 client.captureMessage('Socket event with undefined emulator core')
                 return
+
+            split = msg.split("-")
+            action = split[0]
+            key = split[1]
             command_string = "%s" % (Server.KEYMAP.get(int(key)))
             Server.all_logs.append(command_string)
-            Server.core.push_key(int(key))
+
+            if action == "down":
+                Server.core.key_down(int(key))
+            elif action == "up":
+                Server.core.key_up(int(key))
+            elif action == "press":
+                Server.core.push_key(int(key))
             # Send the recent command to the user
             for client in Server.clients:
                 client.write_message({'event': 'last log', 'data': command_string})

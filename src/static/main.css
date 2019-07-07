@@ -1,6 +1,7 @@
 html, body {
     height: 90%;
     max-height: 90%;
+    cursor: none;
 }
 
 body {
@@ -33,7 +34,7 @@ body {
     position: absolute;
     right: 0;
     top: 0;
-    width: 250px;
+    width: 150px;
     padding: 3px;
     background:#D3D3D3;
     height: 90%;
