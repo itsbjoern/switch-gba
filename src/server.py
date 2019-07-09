@@ -66,8 +66,6 @@ class Server:
             split = msg.split("-")
             action = split[0]
             key = split[1]
-            command_string = "%s" % (Server.KEYMAP.get(int(key)))
-            Server.all_logs.append(command_string)
 
             if action == "down":
                 Server.core.key_down(int(key))
@@ -75,9 +73,6 @@ class Server:
                 Server.core.key_up(int(key))
             elif action == "press":
                 Server.core.push_key(int(key))
-            # Send the recent command to the user
-            for client in Server.clients:
-                client.write_message({'event': 'last log', 'data': command_string})
 
         def on_close(self):
             Server.clients.remove(self)

@@ -21,6 +21,7 @@ if __name__ == '__main__':
     # Start the emulator service first and run in a background thread.
     emulator_thread = threading.Thread(target=thread_function, args=(core,))
     emulator_thread.start()
+    print("[!] Emulator started")
 
     web_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()

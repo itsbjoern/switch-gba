@@ -1,0 +1,3 @@
+[submodule "mgba"]
+	path = mgba
+	url = git@github.com:BFriedrichs/mgba.git

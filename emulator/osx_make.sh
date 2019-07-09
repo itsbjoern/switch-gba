@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-cmake -DCMAKE_PREFIX_PATH=`brew --prefix qt5` . -DBUILD_PYTHON=ON -DBUILD_SERVER=OFF -DBUILD_SDL=OFF -DBUILD_QT=OFF

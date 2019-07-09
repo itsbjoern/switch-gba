@@ -108,7 +108,7 @@ function onVirtualKey(key) {
 
 function onKey(event) {
   if (KEY_MAP[event.keyCode] !== undefined) {
-    ws.send(KEY_MAP[event.keyCode]);
+    ws.send("press-" + KEY_MAP[event.keyCode]);
   }
 }
 
