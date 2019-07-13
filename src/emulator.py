@@ -21,6 +21,8 @@ class Emulator(object):
         self.fps = 60
         self.imageBuf = io.BytesIO()
 
+        self.turbo = False
+
         # The actions will be stored in a queue.
         self.queue = []
         self.keys_down = []
@@ -32,7 +34,9 @@ class Emulator(object):
             while self.enabled:
                 curr_frame = time.time()
                 delta = curr_frame - last_frame
-                if delta < 1 / 120:
+
+                framecap = 540 if self.turbo else 60
+                if delta < 1 / framecap:
                     continue
                 last_frame = curr_frame
 
@@ -60,6 +64,9 @@ class Emulator(object):
                     last_display_frame = curr_frame
         except:
             pass
+
+    def set_turbo(self, enabled):
+        self.turbo = enabled
 
     def set_fps(self, fps):
         self.fps = fps

@@ -3,21 +3,30 @@
     <head>
         <title>Crowdsourced Gameboy Advanced</title>
         <meta charset="utf-8"/>
-        <link rel="stylesheet" type="text/css" href="/static/main.css">]
+        <link rel="stylesheet" type="text/css" href="/static/main.css">
         <script type="text/javascript" src="/static/game.js"></script>
         <script type="text/javascript" src="/static/index.js"></script>
     </head>
     <body>
+        <div class="sidebar sidebar-left">
+            <button tabindex="-1" class="shoulder shoulder-left"  onclick="onVirtualKey(65);">L</button>
+            <button tabindex="-1" class="button startButton"  onclick="onVirtualKey(13);">Start</button>
+            <button tabindex="-1" class="button selectButton"  onclick="onVirtualKey(8);">Select</button>
+        </div>
         <div class="game">
           <canvas id="canvas"></canvas>
           <iframe id="backCapture" src="frame"></iframe>
         </div>
-        <div class="controls">
+        <div class="sidebar sidebar-right">
+            <button tabindex="-1" class="shoulder shoulder-right"  onclick="onVirtualKey(83);">R</button>
+            <div class="game-settings">
+                <h2>Game</h2>
+                <input class="setting" type="checkbox" tabindex="-1" onchange="settingsChange('turbo', event)">Turbo</input>
+            </div>
             <div class="page-controls">
                 <button id="dummy" style=""></button>
-                <button tabindex="-1" onclick="location.reload();">Reload page</button>
+                <button tabindex="-1" class="button reload" onclick="location.reload();">Reload page</button>
             </div>
-            <button tabindex="-1" id="startButton" onclick="onVirtualKey(13);">Start</button>
         </div>
     </body>
 </html>

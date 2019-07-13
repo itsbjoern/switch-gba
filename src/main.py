@@ -14,12 +14,12 @@ if __name__ == '__main__':
 
     # Service instantiation.
     web_server = server.Server()
-    core = emulator.Emulator(sys.argv[1], web_server)
-    web_server.set_core(core)
+    emulator = emulator.Emulator(sys.argv[1], web_server)
+    web_server.set_emulator(emulator)
 
     # Start both services.
     # Start the emulator service first and run in a background thread.
-    emulator_thread = threading.Thread(target=thread_function, args=(core,))
+    emulator_thread = threading.Thread(target=thread_function, args=(emulator,))
     emulator_thread.start()
     print("[!] Emulator started")
 

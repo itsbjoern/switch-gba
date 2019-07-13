@@ -11,6 +11,14 @@ function confirmExit() {
 }
 window.onbeforeunload = confirmExit;
 
+function settingsChange(type, event) {
+  switch(type) {
+    case "turbo":
+      gameInstance.setTurbo(event.target.checked);
+  }
+  document.getElementById("dummy").focus();
+}
+
 function onVirtualKey(key) {
   onKey({keyCode: key});
 }

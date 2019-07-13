@@ -140,8 +140,13 @@ class Game {
 
     var key = KEY_MAP[keyCode];
     if (key !== undefined) {
-      this.socketConnection.send(type + "-" + key);
+      this.socketConnection.send("key-" + type + "-" + key);
     }
+  }
+
+  setTurbo(enabled) {
+    var enabledText = enabled ? "on" : "off";
+    this.socketConnection.send("setting-turbo-" + enabledText);
   }
 
   keyPress(event) {

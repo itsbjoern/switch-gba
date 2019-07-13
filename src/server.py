@@ -9,7 +9,7 @@ class Server:
     # Data to send to the client when entering.
     metadata = dict()
     # The emulator instance
-    core = None
+    emulator = None
 
     # Stores all the commands in a ring buffer of size 1000
     all_logs = RingBuffer(1000)
@@ -58,29 +58,39 @@ class Server:
                 self.write_message({ 'event': 'all logs', 'data': Server.all_logs.get_k_recent(buffer_index) })
 
 
+        def handleKey(self, action, key):
+            # Assume that b key is pressed until other key is pressed
+            if key == GBA.KEY_B:
+                Server.emulator.push_key(int(key))
+                Server.emulator.key_down(int(key))
+                return
+            else:
+                Server.emulator.key_up(int(key))
+
+            if action == "down":
+                Server.emulator.key_down(int(key))
+            elif action == "up":
+                Server.emulator.key_up(int(key))
+            elif action == "press":
+                Server.emulator.push_key(int(key))
+
+        def handleSetting(self, setting, enabled):
+            is_enabled = enabled == "on"
+            if setting == "turbo":
+                Server.emulator.set_turbo(is_enabled)
+
         def on_message(self, msg):
-            if Server.core is None:
+            if Server.emulator is None:
                 client.captureMessage('Socket event with undefined emulator core')
                 return
 
             split = msg.split("-")
-            action = split[0]
-            key = split[1]
+            interaction = split[0]
 
-            # Assume that b key is pressed until other key is pressed
-            if key == GBA.KEY_B:
-                Server.core.push_key(int(key))
-                Server.core.key_down(int(key))
-                return
-            else:
-                Server.core.key_up(int(key))
-
-            if action == "down":
-                Server.core.key_down(int(key))
-            elif action == "up":
-                Server.core.key_up(int(key))
-            elif action == "press":
-                Server.core.push_key(int(key))
+            if interaction == "key":
+                self.handleKey(split[1], split[2])
+            elif interaction == "setting":
+                self.handleSetting(split[1], split[2])
 
         def on_close(self):
             Server.clients.remove(self)
@@ -88,11 +98,11 @@ class Server:
         def check_origin(self, orgin):
             return True
 
-    def set_core(self, _core):
-        Server.core = _core
+    def set_emulator(self, emulator):
+        Server.emulator = emulator
         Server.metadata['event'] = 'metadata'
-        Server.metadata['width'] = _core.width
-        Server.metadata['height'] = _core.height
+        Server.metadata['width'] = emulator.width
+        Server.metadata['height'] = emulator.height
 
     def emit_frame(self, data):
         if data is None or len(data) <= 0:
