@@ -12,7 +12,7 @@
             <button tabindex="-1" class="shoulder shoulder-left"  onclick="onVirtualKey(65);">L</button>
 
             <div class="savecontainer">
-                <select class="savestate" onchange="setState(event);">
+                <select tabindex="-1" class="savestate" onchange="setState(event);">
                     {% for i in range(1, 10) %}
                         <option value="{{i}}">{{i}}</option>
                     {% end %}
@@ -37,9 +37,9 @@
             </div>
             <div class="page-controls">
                 <button id="dummy" style=""></button>
-                <button tabindex="-1" class="button reload go-back" onclick="goBack();">Go Back</button>
-                <button tabindex="-1" class="button reload reload-emu" onclick="reloadEmulator();">Reset</button>
-                <button tabindex="-1" class="button reload" onclick="location.reload();">Reload page</button>
+                <button tabindex="-1" class="reload go-back" onclick="goBack();">Go Back</button>
+                <button tabindex="-1" class="reload reload-emu" onclick="reloadEmulator();">Reset</button>
+                <button tabindex="-1" class="reload" onclick="location.reload();">Reload page</button>
             </div>
         </div>
     </body>

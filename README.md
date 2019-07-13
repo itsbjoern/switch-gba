@@ -18,7 +18,7 @@ Switch supported HTML features http://html5test.com/s/a77ccd45f1540617.html
 
 ---
 ## Planned features
-* Save states
+* [Done] Save states
 
 ---
 ## How?

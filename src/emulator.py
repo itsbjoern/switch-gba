@@ -4,6 +4,7 @@ import io
 import time
 import extend_mgba
 
+# Disable GBA logging
 mgba.log.install_default(mgba.log.NullLogger())
 
 class Emulator(object):
@@ -89,8 +90,8 @@ class Emulator(object):
                 if display_delta >= 1 / self.fps:
                     self.web_server.emit_frame(self.get_frame())
                     last_display_frame = curr_frame
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
     def set_turbo(self, enabled):
         self.turbo = enabled
