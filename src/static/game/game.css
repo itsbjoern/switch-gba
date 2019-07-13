@@ -81,13 +81,44 @@ body {
     width: 154px;
 }
 
-
 .go-back {
     bottom: 120px;
 }
 
 .reload-emu {
     bottom: 60px;
+}
+
+.savecontainer {
+    position: absolute;
+    top: 100px;
+    width: 100px;
+
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.savestate {
+    width: 100px;
+    height: 40px;
+    border-radius: 25px;
+    border-width: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    text-align: center;
+    padding-left: 45px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+button:focus, input:focus {
+    outline:0;
+}
+
+.save, .load {
+    margin-top: 15px;
+    position: relative;
 }
 
 .startButton {

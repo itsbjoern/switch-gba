@@ -4,12 +4,26 @@ var VIEW_CONFIG = {
   sidebarWidth: 154
 };
 var gameInstance = null;
+var saveState = 1;
 
 // Capture switch browser to disable accidental unload
 function confirmExit() {
   return "";
 }
 window.onbeforeunload = confirmExit;
+
+function setState(event) {
+  saveState = event.target.value;
+  document.getElementById("dummy").focus();
+}
+
+function saveState() {
+  gameInstance.saveState(saveState);
+}
+
+function loadState() {
+  gameInstance.loadState(saveState);
+}
 
 function goBack() {
   location.href = location.origin;

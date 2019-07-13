@@ -150,6 +150,14 @@ class Game {
     }
   }
 
+  saveState(index) {
+    this.socketConnection.send("state-save-" + index);
+  }
+
+  loadState(index) {
+    this.socketConnection.send("state-load-" + index);
+  }
+
   setTurbo(enabled) {
     var enabledText = enabled ? "on" : "off";
     this.socketConnection.send("setting-turbo-" + enabledText);

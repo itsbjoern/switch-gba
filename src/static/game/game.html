@@ -10,6 +10,18 @@
     <body>
         <div class="sidebar sidebar-left">
             <button tabindex="-1" class="shoulder shoulder-left"  onclick="onVirtualKey(65);">L</button>
+
+            <div class="savecontainer">
+                <select class="savestate" onchange="setState(event);">
+                    {% for i in range(1, 10) %}
+                        <option value="{{i}}">{{i}}</option>
+                    {% end %}
+                </select>
+                <button tabindex="-1" class="button save"  onclick="saveState();">Save</button>
+                <button tabindex="-1" class="button load"  onclick="loadState();">Load</button>
+            </div>
+
+
             <button tabindex="-1" class="button startButton"  onclick="onVirtualKey(13);">Start</button>
             <button tabindex="-1" class="button selectButton"  onclick="onVirtualKey(8);">Select</button>
         </div>

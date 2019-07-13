@@ -2,6 +2,7 @@ import mgba.core, mgba.image, mgba.log
 from mgba.gba import GBA
 import io
 import time
+import extend_mgba
 
 mgba.log.install_default(mgba.log.NullLogger())
 
@@ -34,6 +35,16 @@ class Emulator(object):
 
         self.web_server.set_size(width, height)
         self.enabled = True
+
+    def save_state(self, slot):
+        if not self.core:
+            return
+        extend_mgba.save_state(self.core, slot)
+
+    def load_state(self, slot):
+        if not self.core:
+            return
+        extend_mgba.load_state(self.core, slot)
 
     def stop(self):
         self.enabled = False

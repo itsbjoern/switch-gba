@@ -6,7 +6,6 @@ import urllib.parse
 from tornado import websocket, web, ioloop
 from mgba.gba import GBA
 
-
 class Server(web.Application):
     clients = set()
     metadata = dict()
@@ -39,8 +38,15 @@ class Server(web.Application):
         ]
         super().__init__(_handlers, **_settings)
 
+        tornado.autoreload.add_reload_hook(self.before_reload)
         self.emulator = emulator.Emulator(self)
         print('[!] Started Webserver')
+
+    def before_reload(self):
+        if self.emulator:
+            self.emulator.stop()
+        if self.emulator_thread:
+            self.emulator_thread.join()
 
     def thread_function(self, core, path):
         core.run(path)
@@ -135,6 +141,15 @@ class Server(web.Application):
             if setting == "turbo":
                 self.application.emulator.set_turbo(is_enabled)
 
+        def handleState(self, action, slot):
+            app = self.application
+
+            slot = int(slot)
+            if action == "save":
+                app.emulator.save_state(slot)
+            elif action == "load":
+                app.emulator.load_state(slot)
+
         def on_message(self, msg):
             app = self.application
             if app.emulator is None:
@@ -150,6 +165,8 @@ class Server(web.Application):
                 self.handleSetting(split[1], split[2])
             elif interaction == "reload":
                 app.emulator.core.reset()
+            elif interaction == "state":
+                self.handleState(split[1], split[2])
 
         def on_close(self):
             app = self.application
