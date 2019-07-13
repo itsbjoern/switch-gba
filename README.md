@@ -1,8 +1,8 @@
 # Switch GBA Emulator
 
 <img width="500" src="showcase/video_smaller.gif" />
-<img width="250" src="showcase/game.jpg" />
 <img width="250" style="float: left" src="showcase/list.jpg" />
+<img width="250" style="float: left" src="showcase/game.jpg" />
 
 This project is meant as an experiment of what is possible and not to be used commercially.
 This is a hobby project and therefore I won't commit to offering help / maintaining / updating this project unless I choose to do so.
@@ -28,7 +28,7 @@ Only sends an event if you're focused on an input element. The input element has
 
 #### The problem
 Literally every other button doesn't send an event (or only when in input mode).
-I was fine with having `Start` / `Select` / `L` / `R` on screen however `B` was too important to map there. The issue is `B` in the browser set the current view to the last visited page (no call or button press, it happens in some upper layer that you can't access).
+I was fine with having `Start` / `Select` / `L` / `R` on screen however `B` was too important to map there. The issue is `B` in the browser sets the current view to the last visited page (no call or button press, it happens in some upper layer that you can't access).
 
 #### The fix
 This is where the fun begins, the way the Switch handles `B` is a bit different if there is an iFrame present on the page. In this case `B` will actually navigate the iFrame back first **before** navigating back the actual page (or reloading it). This is crucial for my workaround. With the use of `postMessage` I always immediately return to a "navigated" state of the iFrame while using the navigation event as a button input. Sadly it isn't possible to maintain a `keydown` state, I worked around that by making a `B` press a `down` event by default which gets interrupted by any other keypress.
