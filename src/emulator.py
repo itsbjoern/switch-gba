@@ -1,4 +1,5 @@
 import mgba.core, mgba.image, mgba.log
+from mgba.gba import GBA
 import io
 import time
 
@@ -17,50 +18,59 @@ class Emulator(object):
         self.core.reset()
         self.enabled = True
 
+        self.fps = 60
+        self.imageBuf = io.BytesIO()
+
         # The actions will be stored in a queue.
         self.queue = []
         self.keys_down = []
 
     def run(self):
-        frames = 0
         last_frame = time.time()
-        last_frame_timing = time.time()
+        last_display_frame = time.time()
         try:
             while self.enabled:
                 curr_frame = time.time()
                 delta = curr_frame - last_frame
-                if delta < 1 / 60:
+                if delta < 1 / 120:
                     continue
                 last_frame = curr_frame
-
-                frames += 1
-                if curr_frame - last_frame_timing >= 1:
-                    frames = 0
-                    last_frame_timing = curr_frame
 
                 # 0 is 'a' so this number allows execution without seemingly doing anything
                 EXTREMELY_MAGIC_NUMBER = 15
                 key = EXTREMELY_MAGIC_NUMBER
                 if len(self.queue) != 0:
                     key = self.queue.pop(0)
+
+                    # Hackily advance by one frame without b pressed to register new press
+                    if key == GBA.KEY_B and len(self.keys_down) != 0:
+                        if self.keys_down[0] == GBA.KEY_B:
+                            self.core.set_keys(EXTREMELY_MAGIC_NUMBER)
+                            self.core.run_frame()
                 elif len(self.keys_down) != 0:
                     key = self.keys_down[0]
 
                 # multiple args possible
                 self.core.set_keys(key)
                 self.core.run_frame()
-                self.web_server.emit_frame(self.get_frame())
-                # audio_channels = self.core.get_audio_channels()
+
+                display_delta = curr_frame - last_display_frame
+                if display_delta >= 1 / self.fps:
+                    self.web_server.emit_frame(self.get_frame())
+                    last_display_frame = curr_frame
         except:
             pass
 
+    def set_fps(self, fps):
+        self.fps = fps
 
     def get_frame(self):
         try:
+            self.imageBuf.truncate(0)
+            self.imageBuf.seek(0)
             image = self.image.to_pil().convert('RGB')
-            buf = io.BytesIO()
-            image.save(buf, format='JPEG', quality=100)
-            return buf.getvalue()[:]
+            image.save(self.imageBuf, format='WebP', lossless=True)
+            return self.imageBuf.getvalue()[:]
         except:
             print("[!!] Error converting frame")
             return []

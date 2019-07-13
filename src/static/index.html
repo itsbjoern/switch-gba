@@ -3,24 +3,21 @@
     <head>
         <title>Crowdsourced Gameboy Advanced</title>
         <meta charset="utf-8"/>
-        <link rel="stylesheet" type="text/css" href="/static/main.css">
+        <link rel="stylesheet" type="text/css" href="/static/main.css">]
+        <script type="text/javascript" src="/static/game.js"></script>
         <script type="text/javascript" src="/static/index.js"></script>
     </head>
     <body>
-        <div class="controls">
-            <h2>Page</h2>
-            <button tabindex="-1" onclick="location.reload();">Reload page</button>
-            <h2>Controls</h2>
-            <button tabindex="-1" onclick="onVirtualKey(13);">Start</button>
-        </div>
         <div class="game">
           <canvas id="canvas"></canvas>
           <iframe id="backCapture" src="frame"></iframe>
         </div>
-        <div class="message-container">
-            <h2>Game</h2>
-            <button id="dummy"></button>
-            <div class="messages" id="commands"></div>
+        <div class="controls">
+            <div class="page-controls">
+                <button id="dummy" style=""></button>
+                <button tabindex="-1" onclick="location.reload();">Reload page</button>
+            </div>
+            <button tabindex="-1" id="startButton" onclick="onVirtualKey(13);">Start</button>
         </div>
     </body>
 </html>

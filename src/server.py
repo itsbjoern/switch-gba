@@ -67,6 +67,14 @@ class Server:
             action = split[0]
             key = split[1]
 
+            # Assume that b key is pressed until other key is pressed
+            if key == GBA.KEY_B:
+                Server.core.push_key(int(key))
+                Server.core.key_down(int(key))
+                return
+            else:
+                Server.core.key_up(int(key))
+
             if action == "down":
                 Server.core.key_down(int(key))
             elif action == "up":
@@ -91,8 +99,11 @@ class Server:
             return
         @tornado.gen.coroutine
         def stream_frame(self):
-            for client in Server.clients:
-                yield client.write_message(data, binary=True)
+            try:
+                for client in Server.clients:
+                    yield client.write_message(data, binary=True)
+            except Exception as e:
+                pass
 
         tornado.ioloop.IOLoop.current().spawn_callback(stream_frame, self)
 
