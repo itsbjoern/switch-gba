@@ -72,8 +72,10 @@ class SocketConnection {
 }
 
 class Game {
-  constructor(ctx) {
-    this.ctx = ctx;
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+
     this.socketConnection = new SocketConnection(window.location.host);
     this.isRunning = false;
 
@@ -101,6 +103,9 @@ class Game {
       try {
         var json = JSON.parse(event.data);
         switch (json.event) {
+          case 'metadata':
+            this.setCanvas(json.width, json.height);
+            break;
           default:
             break;
         }
@@ -116,6 +121,11 @@ class Game {
   stop() {
     this.isRunning = false;
     this.socketConnection.disconnect();
+  }
+
+  setCanvas(width, height) {
+    this.canvas.width = width;
+    this.canvas.height = height;
   }
 
   updateFrame() {

@@ -45,9 +45,7 @@ function onLoad(event) {
   document.getElementById("dummy").focus();
 
   var canvas = document.getElementById('canvas');
-  var context = canvas.getContext('2d');
-
-  gameInstance = new Game(context);
+  gameInstance = new Game(canvas);
   gameInstance.start();
 
   // The switch doesn't send a 'b' press event but rather just returns to the last site
