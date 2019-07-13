@@ -1,47 +1,100 @@
-import os.path, tornado
-from mgba.gba import GBA
+import os
+import threading
+import tornado
+import emulator
+import urllib.parse
 from tornado import websocket, web, ioloop
-from ringbuffer import RingBuffer
+from mgba.gba import GBA
 
-class Server:
-    # Store all active clients in a set.
+
+class Server(web.Application):
     clients = set()
-    # Data to send to the client when entering.
     metadata = dict()
-    # The emulator instance
     emulator = None
+    emulator_thread = None
 
-    # Stores all the commands in a ring buffer of size 1000
-    all_logs = RingBuffer(1000)
+    curr_path = os.path.dirname(__file__)
+    rom_path = os.path.join(curr_path, "..", "roms")
+    rom_objects = []
+    current_game = None
 
     # mapping of keynames that the client will use
     KEYMAP = {GBA.KEY_A: 'a', GBA.KEY_B: 'b', GBA.KEY_SELECT: 'select', GBA.KEY_START: 'start', GBA.KEY_RIGHT: 'right',
               GBA.KEY_LEFT: 'left', GBA.KEY_UP: 'up', GBA.KEY_DOWN: 'down', GBA.KEY_R: 'r', GBA.KEY_L: 'l'}
 
     def __init__(self):
-        self._settings = dict(
+        _settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), 'static'),
             static_path=os.path.join(os.path.dirname(__file__), 'static'),
             debug=True,
             autoreload=True
         )
-        self._handlers = [
-            (r'/', Server.IndexHandler),
-            (r'/frame', Server.FrameHandler),
-            (r'/debug', Server.DebugHandler),
-            (r'/ws', Server.SocketHandler),
+        _handlers = [
+            (r'/', self.IndexHandler),
+            (r'/game', self.GameHandler),
+            (r'/frame', self.FrameHandler),
+            (r'/debug', self.DebugHandler),
+            (r'/ws', self.SocketHandler),
             (r'/favicon.ico', web.StaticFileHandler, { 'path': '.' })
         ]
+        super().__init__(_handlers, **_settings)
 
-        self.app = web.Application(self._handlers, **self._settings)
+        self.emulator = emulator.Emulator(self)
+        print('[!] Started Webserver')
+
+    def thread_function(self, core, path):
+        core.run(path)
+
+    def reload_rom_list(self):
+        files = os.listdir(self.rom_path)
+        roms = list(filter(lambda x: x.endswith('.gba'), files))
+
+        self.rom_objects = []
+        for rom in roms:
+            path = os.path.join(self.rom_path, rom)
+            f = open(path, 'rb')
+            f.seek(160)
+            name = f.read(12).decode('utf-8')
+
+            has_save = os.path.exists(os.path.join(self.rom_path, rom[:-4] + ".sav"))
+            self.rom_objects.append({
+                'name': name,
+                'filename': rom,
+                'has_save': has_save,
+                'index': len(self.rom_objects)
+            })
+
+    def load_rom(self, game):
+        if game == self.current_game:
+            return
+
+        if self.current_game is not None:
+            self.emulator.stop()
+            self.emulator_thread.join()
+
+        path = os.path.join(self.rom_path, game)
+
+        self.emulator_thread = threading.Thread(target=self.thread_function, args=(self.emulator,path,))
+        self.emulator_thread.start()
+        self.current_game = game
 
     class IndexHandler(web.RequestHandler):
         def get(self):
-            self.render('index.html')
+            self.application.reload_rom_list()
+            self.render('index/index.html', roms=self.application.rom_objects)
+
+    class GameHandler(web.RequestHandler):
+        def get(self):
+            game = self.get_argument("game", None)
+            if game is None:
+                self.render('index/index.html', roms=self.application.rom_objects)
+
+            self.application.load_rom(urllib.parse.unquote(game))
+            self.render('game/game.html')
 
     class FrameHandler(web.RequestHandler):
         def get(self):
-            self.render('frame.html')
+            self.render('game/frame.html')
 
     class DebugHandler(web.RequestHandler):
         def post(self):
@@ -51,24 +104,21 @@ class Server:
 
     class SocketHandler(websocket.WebSocketHandler):
         def open(self):
-            Server.clients.add(self)
-            self.write_message(Server.metadata)
-            buffer_index = Server.all_logs.index
-            if buffer_index > 0:
-                self.write_message({ 'event': 'all logs', 'data': Server.all_logs.get_k_recent(buffer_index) })
-
+            self.application.clients.add(self)
+            self.write_message(self.application.metadata)
 
         def handleKey(self, action, key):
+            app = self.application
             # Assume that b key is pressed until other key is pressed
             if key == GBA.KEY_B:
-                Server.emulator.push_key(int(key))
-                Server.emulator.key_down(int(key))
+                app.emulator.push_key(int(key))
+                app.emulator.key_down(int(key))
                 return
             else:
-                Server.emulator.key_up(int(key))
+                app.emulator.key_up(int(key))
 
             if action == "down":
-                Server.emulator.key_down(int(key))
+                app.emulator.key_down(int(key))
             elif action == "up":
                 Server.emulator.key_up(int(key))
             elif action == "press":
@@ -80,7 +130,8 @@ class Server:
                 Server.emulator.set_turbo(is_enabled)
 
         def on_message(self, msg):
-            if Server.emulator is None:
+            app = self.application
+            if app.emulator is None:
                 client.captureMessage('Socket event with undefined emulator core')
                 return
 
@@ -92,19 +143,18 @@ class Server:
             elif interaction == "setting":
                 self.handleSetting(split[1], split[2])
             elif interaction == "reload":
-                Server.emulator.core.reset()
+                app.emulator.core.reset()
 
         def on_close(self):
-            Server.clients.remove(self)
+            self.application.clients.remove(self)
 
         def check_origin(self, orgin):
             return True
 
-    def set_emulator(self, emulator):
-        Server.emulator = emulator
-        Server.metadata['event'] = 'metadata'
-        Server.metadata['width'] = emulator.width
-        Server.metadata['height'] = emulator.height
+    def set_size(self, width, height):
+        self.metadata['event'] = 'metadata'
+        self.metadata['width'] = width
+        self.metadata['height'] = height
 
     def emit_frame(self, data):
         if data is None or len(data) <= 0:
@@ -118,9 +168,6 @@ class Server:
                 pass
 
         tornado.ioloop.IOLoop.current().spawn_callback(stream_frame, self)
-
-    def listen(self, port):
-        self.app.listen(port)
 
 
 if __name__ == '__main__':

@@ -6,19 +6,13 @@ import time
 mgba.log.install_default(mgba.log.NullLogger())
 
 class Emulator(object):
-    def __init__(self, rom_path, web_server):
+    def __init__(self, web_server):
         self.web_server = web_server
-        self.core = mgba.core.load_path(rom_path)
-        self.width, self.height = self.core.desired_video_dimensions()
-        self.image = mgba.image.Image(self.width, self.height)
-        self.core.set_video_buffer(self.image)
-        self.core.autoload_save()
-
-        # Reset the core. This is needed before it can run.
-        self.core.reset()
-        self.enabled = True
+        self.enabled = False
 
         self.fps = 60
+        self.core = None
+        self.image = None
         self.imageBuf = io.BytesIO()
 
         self.turbo = False
@@ -27,7 +21,25 @@ class Emulator(object):
         self.queue = []
         self.keys_down = []
 
-    def run(self):
+    def init_with_path(self, path):
+        self.core = mgba.core.load_path(path)
+        width, height = self.core.desired_video_dimensions()
+        self.image = mgba.image.Image(width, height)
+
+        self.core.set_video_buffer(self.image)
+        self.core.autoload_save()
+
+        self.core.reset()
+
+        self.web_server.set_size(width, height)
+        self.enabled = True
+
+    def stop(self):
+        self.enabled = False
+
+    def run(self, path):
+        self.init_with_path(path)
+        print('[!] Emulator started')
         last_frame = time.time()
         last_display_frame = time.time()
         try:

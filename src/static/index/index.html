@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+      <title>GBA for Nintendo Switch</title>
+      <meta charset="utf-8"/>
+      <link rel="stylesheet" type="text/css" href="/static/index/main.css">
+      <script type="text/javascript" src="/static/index/index.js"></script>
+  </head>
+  <body>
+    <div class="content">
+        <h1 class="header">Available roms</h1>
+        <ul id="rom-list">
+          {% for rom in roms %}
+            <button onclick="startRom('{{ rom['filename'] }}');" class="rom">
+              <div>
+                {{ escape(rom['name']) }} <span class="filename">({{ escape(rom['filename']) }})</span>
+              </div>
+              <img class="save {% if rom['has_save'] %}has_save{% end %}" width="25" height="25" src="static/save.svg" />
+
+            </button>
+          {% end %}
+        </ul>
+    </div>
+
+  </body>
+</html>
