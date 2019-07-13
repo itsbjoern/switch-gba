@@ -1,4 +1,5 @@
 # Switch GBA Emulator
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/bfriedrichs/switch-gba.svg)
 
 ## Motivation
 Homebrewing / Hacking a switch is too much of a dangerous affair for me personally and after learning there is a browser I tried to get it running in there. Turns out it is (sort of) possible.
