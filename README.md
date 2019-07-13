@@ -1,5 +1,8 @@
 # Switch GBA Emulator
 
+## Motivation
+Homebrewing / Hacking a switch is too much of a dangerous affair for me personally and after learning there is a browser I tried to get it running in there. Turns out it is (sort of) possible.
+
 <img width="500" src="showcase/video_smaller.gif" />
 <p float="left">
 <img width="250" src="showcase/game.jpg" />
