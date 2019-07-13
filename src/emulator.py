@@ -9,6 +9,7 @@ class Emulator(object):
     def __init__(self, web_server):
         self.web_server = web_server
         self.enabled = False
+        self.paused = False
 
         self.fps = 60
         self.core = None
@@ -44,6 +45,9 @@ class Emulator(object):
         last_display_frame = time.time()
         try:
             while self.enabled:
+                if self.paused:
+                    time.sleep(2)
+                    continue
                 curr_frame = time.time()
                 delta = curr_frame - last_frame
 

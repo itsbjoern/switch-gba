@@ -106,6 +106,8 @@ class Server(web.Application):
         def open(self):
             app = self.application
             app.clients.add(self)
+            app.emulator.paused = False
+
             metadata = app.metadata
             metadata['settings'] = {}
             metadata['settings']['turbo'] = app.emulator.turbo
@@ -150,7 +152,10 @@ class Server(web.Application):
                 app.emulator.core.reset()
 
         def on_close(self):
-            self.application.clients.remove(self)
+            app = self.application
+            app.clients.remove(self)
+            if len(app.clients) == 0:
+                app.emulator.paused = True
 
         def check_origin(self, orgin):
             return True
