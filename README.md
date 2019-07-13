@@ -1,8 +1,10 @@
 # Switch GBA Emulator
 
 <img width="500" src="showcase/video_smaller.gif" />
-<img width="250" style="float: left" src="showcase/list.jpg" />
-<img width="250" style="float: left" src="showcase/game.jpg" />
+<p float="left">
+<img width="250" src="showcase/game.jpg" />
+<img width="250" src="showcase/list.jpg" />
+</p>
 
 This project is meant as an experiment of what is possible and not to be used commercially.
 This is a hobby project and therefore I won't commit to offering help / maintaining / updating this project unless I choose to do so.
