@@ -81,6 +81,10 @@ body {
     width: 154px;
 }
 
+.reload-emu {
+    bottom: 100px;
+}
+
 .startButton {
     top: 400px;
 }

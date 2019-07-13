@@ -149,6 +149,10 @@ class Game {
     this.socketConnection.send("setting-turbo-" + enabledText);
   }
 
+  reloadEmulator() {
+    this.socketConnection.send("reload");
+  }
+
   keyPress(event) {
     this.onEvent("press", event.keyCode);
   }

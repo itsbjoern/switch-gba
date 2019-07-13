@@ -11,6 +11,14 @@ function confirmExit() {
 }
 window.onbeforeunload = confirmExit;
 
+function reloadEmulator() {
+  var shouldReload = confirm("Are you sure you want to restart the emulator");
+  if (shouldReload) {
+    gameInstance.reloadEmulator();
+  }
+  document.getElementById("dummy").focus();
+}
+
 function settingsChange(type, event) {
   switch(type) {
     case "turbo":

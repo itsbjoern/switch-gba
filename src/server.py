@@ -91,6 +91,8 @@ class Server:
                 self.handleKey(split[1], split[2])
             elif interaction == "setting":
                 self.handleSetting(split[1], split[2])
+            elif interaction == "reload":
+                Server.emulator.core.reset()
 
         def on_close(self):
             Server.clients.remove(self)
