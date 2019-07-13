@@ -9,8 +9,20 @@ body {
   width: 648px;
 }
 
+.head {
+  padding-top: 35px;
+  padding-bottom: 35px;
+  display: flex;
+  justify-content: space-between;
+}
+
 .header {
   color: #f1f1f1;
+}
+
+.refresh {
+  background: none;
+  border: none;
 }
 
 .content {

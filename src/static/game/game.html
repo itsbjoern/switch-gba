@@ -21,10 +21,11 @@
             <button tabindex="-1" class="shoulder shoulder-right"  onclick="onVirtualKey(83);">R</button>
             <div class="game-settings">
                 <h2>Game</h2>
-                <input class="setting" type="checkbox" tabindex="-1" onchange="settingsChange('turbo', event)">Turbo</input>
+                <input id="turbo-setting" class="setting" type="checkbox" tabindex="-1" onchange="settingsChange('turbo', event)">Turbo</input>
             </div>
             <div class="page-controls">
                 <button id="dummy" style=""></button>
+                <button tabindex="-1" class="button reload go-back" onclick="goBack();">Go Back</button>
                 <button tabindex="-1" class="button reload reload-emu" onclick="reloadEmulator();">Reset</button>
                 <button tabindex="-1" class="button reload" onclick="location.reload();">Reload page</button>
             </div>

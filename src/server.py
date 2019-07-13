@@ -104,8 +104,12 @@ class Server(web.Application):
 
     class SocketHandler(websocket.WebSocketHandler):
         def open(self):
-            self.application.clients.add(self)
-            self.write_message(self.application.metadata)
+            app = self.application
+            app.clients.add(self)
+            metadata = app.metadata
+            metadata['settings'] = {}
+            metadata['settings']['turbo'] = app.emulator.turbo
+            self.write_message(metadata)
 
         def handleKey(self, action, key):
             app = self.application
@@ -120,14 +124,14 @@ class Server(web.Application):
             if action == "down":
                 app.emulator.key_down(int(key))
             elif action == "up":
-                Server.emulator.key_up(int(key))
+                app.emulator.key_up(int(key))
             elif action == "press":
-                Server.emulator.push_key(int(key))
+                app.emulator.push_key(int(key))
 
         def handleSetting(self, setting, enabled):
             is_enabled = enabled == "on"
             if setting == "turbo":
-                Server.emulator.set_turbo(is_enabled)
+                self.application.emulator.set_turbo(is_enabled)
 
         def on_message(self, msg):
             app = self.application

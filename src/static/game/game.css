@@ -81,8 +81,13 @@ body {
     width: 154px;
 }
 
+
+.go-back {
+    bottom: 120px;
+}
+
 .reload-emu {
-    bottom: 100px;
+    bottom: 60px;
 }
 
 .startButton {
@@ -122,5 +127,6 @@ body {
 
 .setting {
     margin-top: 10px;
+    margin-right: 8px;
 }
 

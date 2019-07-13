@@ -11,6 +11,10 @@ function confirmExit() {
 }
 window.onbeforeunload = confirmExit;
 
+function goBack() {
+  location.href = location.origin;
+}
+
 function reloadEmulator() {
   var shouldReload = confirm("Are you sure you want to restart the emulator");
   if (shouldReload) {
@@ -29,6 +33,7 @@ function settingsChange(type, event) {
 
 function onVirtualKey(key) {
   onKey({keyCode: key});
+  document.getElementById("dummy").focus();
 }
 
 function onKey(event) {

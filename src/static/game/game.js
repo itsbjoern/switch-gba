@@ -105,6 +105,7 @@ class Game {
         switch (json.event) {
           case 'metadata':
             this.setCanvas(json.width, json.height);
+            this.updateSettings(json.settings);
             break;
           default:
             break;
@@ -112,6 +113,11 @@ class Game {
       } catch (err) {}
     }
   };
+
+  updateSettings(settings) {
+    var turboCheck = document.getElementById("turbo-setting");
+    turboCheck.checked = settings['turbo']
+  }
 
   start() {
     this.isRunning = true;

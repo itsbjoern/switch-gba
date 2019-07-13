@@ -9,8 +9,12 @@ function sendData(data, location) {
   }));
 }
 
+function refreshSite() {
+  location.reload();
+}
+
 function startRom(filename) {
-  var startRom = confirm("Start rom?");
+  var startRom = confirm("Start " + filename + "?");
   if (!startRom) {
     return;
   }
