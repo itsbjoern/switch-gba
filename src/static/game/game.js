@@ -262,7 +262,7 @@ class Game {
   }
 
   saveState() {
-    var slot = this.settings.getSetting("Slot").currentValue;
+    var slot = this.settings.getSettingByName("Slot").currentValue;
     var hasSave = this.rom.save_states.indexOf(slot) !== -1;
     if (hasSave) {
       var confirmed = confirm("Are you sure you want to overwrite the save in slot " + slot + "?");
@@ -276,7 +276,7 @@ class Game {
   }
 
   loadState() {
-    var slot = this.settings.getSetting("Slot").currentValue;
+    var slot = this.settings.getSettingByName("Slot").currentValue;
     var confirmed = confirm("Are you sure you want to load to save in slot " + slot + "?");
     if (!confirmed) {
       return;
