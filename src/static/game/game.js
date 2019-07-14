@@ -59,166 +59,14 @@ var AXIS_MAP = {
       : null,
 };
 
-class Settings {
-  constructor(settings) {
-    this.selectedIndex = 0;
-    this.order = settings.map(s => s.name);
-    this.settings = {};
-
-    for (var index in settings) {
-      var setting = settings[index];
-      this.settings[setting.name] = setting;
-    }
-
-    this.settingsNode = document.getElementById("settings");
-    this.generateDisplay();
-  }
-
-  generateDisplay() {
-    for (var i = 0; i < this.order.length; i++) {
-      var setting = this.getSetting(i);
-
-      var settingNode = document.createElement('div');
-      settingNode.className = "setting" + (i === 0 ? " active" : "");
-      settingNode.id = setting.name;
-
-      var titleNode = document.createElement('h2');
-      titleNode.innerHTML = setting.name;
-      settingNode.appendChild(titleNode);
-
-      var containerNode = document.createElement('div');
-      containerNode.className = "setting-container";
-
-      var wrapContainer = document.createElement('div');
-      wrapContainer.className = "wrap-container";
-      containerNode.appendChild(wrapContainer);
-
-      for (var valueIndex in setting.values) {
-        var value = setting.values[valueIndex];
-        var valueNode = document.createElement('p');
-        valueNode.className = "setting-value";
-        valueNode.className += (valueIndex == 0 ? " current" : " next") + " child-" + Math.abs(valueIndex)
-        valueNode.innerHTML = value;
-
-        wrapContainer.appendChild(valueNode);
-      }
-
-      settingNode.appendChild(containerNode);
-      this.settingsNode.appendChild(settingNode);
-    }
-  }
-
-  updateDisplay() {
-    var activeSetting = this.getSetting(this.selectedIndex);
-    var selectedNode = this.settingsNode.childNodes[this.selectedIndex];
-
-    for (var i in this.order) {
-      var setting = this.getSetting(i);
-      var settingNode = this.settingsNode.childNodes[i];
-      settingNode.className = "setting";
-
-      var listCheck = setting.enabledList && setting.enabledList.indexOf(setting.values[setting.index]) !== -1;
-      if (setting.enabled || listCheck) {
-        settingNode.className += " enabled"
-      }
-
-      if (setting.name === activeSetting.name) {
-        settingNode.className += " active"
-      }
-    }
-
-    var selectedValue = activeSetting.values[activeSetting.index];
-    var currentNode = selectedNode.getElementsByClassName('current')[0];
-    if (currentNode.innerHTML !== "" + selectedValue) {
-      var wrapNode = selectedNode.getElementsByClassName('wrap-container')[0];
-      var offset = 0;
-      for (var i = 0; i < wrapNode.childNodes.length; i++) {
-        var iterNode = wrapNode.childNodes[i];
-        var dist = i - activeSetting.index;
-        var childType = dist === 0
-          ? "current"
-          : dist < 0
-            ? "prev"
-            : "next";
-
-        iterNode.className = "setting-value " + childType + " child-" + Math.abs(dist);
-      }
-    }
-  }
-
-  getSetting(forIndex) {
-    return this.settings[this.order[forIndex]]
-  }
-
-  getSettingByName(name) {
-    return this.settings[name]
-  }
-
-  setCurrentEnabledList(list) {
-    var setting = this.getSetting(this.selectedIndex);
-    setting.enabledList = list;
-    this.updateDisplay();
-  }
-
-  setCurrentEnabled(enabled) {
-    var setting = this.getSetting(this.selectedIndex);
-    setting.enabled = enabled;
-    this.updateDisplay();
-  }
-
-  getCurrentEnabled() {
-    var setting = this.getSetting(this.selectedIndex);
-    return setting.enabled;
-  }
-
-  setEnabledListByName(name, list) {
-    var setting = this.getSettingByName(name);
-    setting.enabledList = list;
-    this.updateDisplay();
-  }
-
-  setEnabledByName(name, enabled) {
-    var setting = this.getSettingByName(name);
-    setting.enabled = enabled;
-    this.updateDisplay();
-  }
-
-  getEnabledByName(name, enabled) {
-    var setting = this.getSettingByName(name);
-    return setting.enabled;
-  }
-
-  selectNextValue() {
-    var setting = this.getSetting(this.selectedIndex);
-    setting.index = Math.min(setting.values.length - 1, setting.index + 1);
-    this.updateDisplay();
-  }
-
-  selectPreviousValue() {
-    var setting = this.getSetting(this.selectedIndex);
-    setting.index = Math.max(0, setting.index - 1);
-    this.updateDisplay();
-  }
-
-  selectNextSetting() {
-    this.selectedIndex = Math.min(this.order.length - 1, this.selectedIndex + 1);
-    this.updateDisplay();
-  }
-
-  selectPreviousSetting() {
-    this.selectedIndex = Math.max(0, this.selectedIndex - 1);
-    this.updateDisplay();
-  }
-
-  getCurrentValue() {
-    var currentSetting = this.getSetting(this.selectedIndex);
-    return currentSetting.values[currentSetting.index];
-  }
-
-  getValueByName(name) {
-    var currentSetting = this.getSettingByName(name);
-    return currentSetting.values[currentSetting.index];
-  }
+function sendDebug(data) {
+  var url = window.location.origin + '/debug';
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhr.send(JSON.stringify({
+    data: data
+  }));
 }
 
 class UI {
@@ -326,6 +174,7 @@ class Game {
       enabled: false,
       index: 0,
       values: [2, 5, 10, 20],
+      onChange: this.changeTurbo.bind(this)
     }])
 
     this.socketConnection = new SocketConnection(window.location.host);
@@ -357,16 +206,6 @@ class Game {
     this.dblClickHandlers = {};
   }
 
-  sendDebug(data) {
-    var url = window.location.origin + '/debug';
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhr.send(JSON.stringify({
-      data: data
-    }));
-  }
-
   handleEvent(event) {
     if (event.data instanceof Blob) {
       this.image.src = URL.createObjectURL(event.data);
@@ -378,7 +217,9 @@ class Game {
             this.setCanvas(json.width, json.height);
             this.updateSettings(json.settings);
             this.rom = json.rom;
-            this.settings.setEnabledListByName("Slot", this.rom.save_states);
+
+            var slotSetting = this.settings.getSettingByName("Slot");
+            slotSetting.setEnabledList(this.rom.save_states);
             break;
           default:
             break;
@@ -388,7 +229,9 @@ class Game {
   };
 
   updateSettings(settings) {
-    // this.setTurbo(settings['turbo']);
+    var turboSetting = this.settings.getSettingByName("Turbo");
+    var turbo = settings['turbo'];
+    turboSetting.setValue(turbo);
   }
 
   start() {
@@ -419,7 +262,7 @@ class Game {
   }
 
   saveState() {
-    var slot = this.settings.getValueByName("Slot");
+    var slot = this.settings.getSetting("Slot").currentValue;
     var hasSave = this.rom.save_states.indexOf(slot) !== -1;
     if (hasSave) {
       var confirmed = confirm("Are you sure you want to overwrite the save in slot " + slot + "?");
@@ -433,12 +276,20 @@ class Game {
   }
 
   loadState() {
-    var slot = this.settings.getValueByName("Slot");
+    var slot = this.settings.getSetting("Slot").currentValue;
     var confirmed = confirm("Are you sure you want to load to save in slot " + slot + "?");
     if (!confirmed) {
       return;
     }
     this.socketConnection.send("state-load-" + slot);
+  }
+
+  changeTurbo(type, value) {
+    if (type !== "currentValue") {
+      return;
+    }
+
+    this.socketConnection.send("setting-turbovalue-" + value);
   }
 
   setTurbo(enabled) {
@@ -447,8 +298,8 @@ class Game {
       return;
     }
 
-    this.settings.setEnabledByName("Turbo", enabled);
-    var value = enabled ? this.settings.getValueByName("Turbo") : 1;
+    turboSetting.setEnabled(enabled);
+    var value = enabled ? "on" : "off";
     this.socketConnection.send("setting-turbo-" + value);
   }
 

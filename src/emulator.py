@@ -18,7 +18,8 @@ class Emulator(object):
         self.image = None
         self.imageBuf = io.BytesIO()
 
-        self.turbo = 1
+        self.turbo = False
+        self.turbo_value = 2
 
         self.keys_down = []
 
@@ -61,7 +62,8 @@ class Emulator(object):
                 curr_frame = time.time()
                 delta = curr_frame - last_frame
 
-                framecap = self.turbo * 60
+                multi = self.turbo_value if self.turbo else 1
+                framecap = multi * 60
                 if delta < 1 / framecap:
                     continue
                 last_frame = curr_frame
@@ -82,8 +84,11 @@ class Emulator(object):
         except Exception as e:
             print(e)
 
-    def set_turbo(self, multi):
-        self.turbo = multi
+    def set_turbo(self, enabled):
+        self.turbo = enabled
+
+    def set_turbo_value(self, multi):
+        self.turbo_value = multi
 
     def set_fps(self, fps):
         self.fps = fps

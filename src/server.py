@@ -120,9 +120,10 @@ class Server(web.Application):
             app.emulator.paused = False
 
             metadata = app.metadata
+            metadata['event'] = 'metadata'
             metadata['settings'] = {}
             metadata['rom'] = app.current_game
-            metadata['settings']['turbo'] = app.emulator.turbo
+            metadata['settings']['turbo'] = app.emulator.turbo_value
             self.write_message(metadata)
 
         def handleKey(self, action, key):
@@ -134,7 +135,10 @@ class Server(web.Application):
 
         def handleSetting(self, setting, extra):
             if setting == "turbo":
-                self.application.emulator.set_turbo(int(extra))
+                enabled = extra == "on"
+                self.application.emulator.set_turbo(enabled)
+            if setting == "turbovalue":
+                self.application.emulator.set_turbo_value(int(extra))
 
         def handleState(self, action, slot):
             app = self.application
@@ -170,11 +174,10 @@ class Server(web.Application):
                 app.emulator.paused = True
                 app.emulator.release_keys()
 
-        def check_origin(self, orgin):
+        def check_origin(self, origin):
             return True
 
     def set_size(self, width, height):
-        self.metadata['event'] = 'metadata'
         self.metadata['width'] = width
         self.metadata['height'] = height
 
