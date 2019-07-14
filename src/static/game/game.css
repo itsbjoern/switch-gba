@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+html {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 body {
     background-color: #2c2f33;
 }
@@ -89,44 +93,68 @@ body {
     bottom: 60px;
 }
 
-.savecontainer {
+.savestate {
     position: absolute;
-    top: 125px;
+    top: 50px;
     width: 100px;
 
     left: 0;
     right: 0;
     margin: auto;
+    color: #f1f1f1;
 }
 
-.savestate {
-    width: 100px;
+.savestate .slot-container {
+    margin-top: 8px;
+    font-size: 30px;
+    font-weight: bold;
+
     height: 40px;
     border-radius: 25px;
-    border-width: 0;
-    -webkit-appearance: none;
-    appearance: none;
+    background-color: #f1f1f1;
     text-align: center;
-    padding-left: 45px;
-    font-size: 18px;
-    font-weight: bold;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#slot-status {
+    position: absolute;
+    z-index: -10;
+    margin-top: -20px;
+    width: 100px;
+    height: 30px;
+    border-radius: 0 0 20px 20px;
+    background-color: coral;
+}
+
+#slot-status.active {
+    background-color: greenyellow;
+}
+
+#slot-before, #slot-after {
+    font-size: 20px;
+    color: #4a4a4a;
+}
+
+#slot-before {
+    margin-right: 8px;
+    transform: rotateY(-45deg);
+}
+
+#slot-after {
+    margin-left: 8px;
+    transform: rotateY(45deg);
+}
+
+.savestate p {
+    color: #2c2f33;
 }
 
 button:focus, input:focus {
     outline:0;
-}
-
-.save, .load {
-    margin-top: 15px;
-    position: relative;
-}
-
-.startButton {
-    top: 400px;
-}
-
-.selectButton {
-    top: 475px;
 }
 
 .page-controls {
@@ -136,20 +164,8 @@ button:focus, input:focus {
     bottom: 0;
 }
 
-.shoulder, .button, .savestate {
-    box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.5);
-}
-
-.shoulder {
-    position: absolute;
-    background-color: #f1f1f1;
-    border-width: 0;
-    width: 154px;
-    height: 50px;
-    font-size: 18px;
-    margin: auto;
-    left: 0;
-    right: 0;
+.button, .savestate .slot-container {
+    box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.5);
 }
 
 .game-settings {
@@ -163,5 +179,53 @@ button:focus, input:focus {
 .setting {
     margin-top: 10px;
     margin-right: 8px;
+}
+
+#pause {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 972px;
+    height: 648px;
+    background-color: rgba(0, 0, 0, 0.7);
+
+    color: #f1f1f1;
+    font-size: 45px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: center;
+
+    padding: 80px;
+}
+
+@keyframes show {
+    0% {bottom: 0; opacity: 0;}
+    40% {bottom: 40px; opacity: 1;}
+    60% {bottom: 40px; opacity: 1;}
+    100% {bottom: 0; opacity: 0;}
+  }
+
+.toast {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    max-width: 500px;
+    background-color: teal;
+    bottom: 40px;
+    color: #f1f1f1;
+    border-radius: 20px;
+    font-size: 25px;
+    padding: 10px;
+    text-align: center;
+    text-transform: uppercase;
+    animation-name: show;
+    animation-duration: 2s;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 

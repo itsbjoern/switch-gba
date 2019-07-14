@@ -1,46 +1,46 @@
 <!doctype html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>GBA for Nintendo Switch</title>
         <meta charset="utf-8"/>
         <link rel="stylesheet" type="text/css" href="/static/game/game.css">
+        <script type="text/javascript" src="/static/gamepad.min.js"></script>
         <script type="text/javascript" src="/static/game/game.js"></script>
         <script type="text/javascript" src="/static/game/main.js"></script>
     </head>
     <body>
         <div class="sidebar sidebar-left">
-            <button tabindex="-1" class="shoulder shoulder-left"  onclick="onVirtualKey(65);">L</button>
-
-            <div class="savecontainer">
-                <select tabindex="-1" class="savestate" onchange="setState(event);">
-                    {% for i in range(1, 10) %}
-                        <option value="{{i}}">{{i}}</option>
-                    {% end %}
-                </select>
-                <button tabindex="-1" class="button save"  onclick="saveState();">Save</button>
-                <button tabindex="-1" class="button load"  onclick="loadState();">Load</button>
+            <div class="savestate">
+                <h2>Slot</h2>
+                <div class="slot-container">
+                    <p id="slot-before">0</p>
+                    <p id="slot">1</p>
+                    <p id="slot-after">2</p>
+                </div>
+                <div id="slot-status"></div>
             </div>
-
-
-            <button tabindex="-1" class="button startButton"  onclick="onVirtualKey(13);">Start</button>
-            <button tabindex="-1" class="button selectButton"  onclick="onVirtualKey(8);">Select</button>
         </div>
         <div class="game">
+          <div id="pause">
+              The game was paused to prevent a size warning.
+              <br /><br />
+              Press any key to continue.
+          </div>
           <canvas id="canvas"></canvas>
           <iframe id="backCapture" src="frame"></iframe>
         </div>
         <div class="sidebar sidebar-right">
-            <button tabindex="-1" class="shoulder shoulder-right"  onclick="onVirtualKey(83);">R</button>
             <div class="game-settings">
                 <h2>Game</h2>
                 <input id="turbo-setting" class="setting" type="checkbox" tabindex="-1" onchange="settingsChange('turbo', event)">Turbo</input>
             </div>
             <div class="page-controls">
-                <button id="dummy" style=""></button>
                 <button tabindex="-1" class="reload go-back" onclick="goBack();">Go Back</button>
                 <button tabindex="-1" class="reload reload-emu" onclick="reloadEmulator();">Reset</button>
                 <button tabindex="-1" class="reload" onclick="location.reload();">Reload page</button>
             </div>
         </div>
+        <div id="toast-container"></div>
     </body>
 </html>

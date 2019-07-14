@@ -20,8 +20,6 @@ class Emulator(object):
 
         self.turbo = False
 
-        # The actions will be stored in a queue.
-        self.queue = []
         self.keys_down = []
 
     def init_with_path(self, path):
@@ -58,7 +56,7 @@ class Emulator(object):
         try:
             while self.enabled:
                 if self.paused:
-                    time.sleep(2)
+                    time.sleep(1)
                     continue
                 curr_frame = time.time()
                 delta = curr_frame - last_frame
@@ -70,20 +68,11 @@ class Emulator(object):
 
                 # 0 is 'a' so this number allows execution without seemingly doing anything
                 EXTREMELY_MAGIC_NUMBER = 15
-                key = EXTREMELY_MAGIC_NUMBER
-                if len(self.queue) != 0:
-                    key = self.queue.pop(0)
 
-                    # Hackily advance by one frame without b pressed to register new press
-                    if key == GBA.KEY_B and len(self.keys_down) != 0:
-                        if self.keys_down[0] == GBA.KEY_B:
-                            self.core.set_keys(EXTREMELY_MAGIC_NUMBER)
-                            self.core.run_frame()
-                elif len(self.keys_down) != 0:
-                    key = self.keys_down[0]
-
-                # multiple args possible
-                self.core.set_keys(key)
+                if len(self.keys_down) != 0:
+                    self.core.set_keys(*self.keys_down)
+                else:
+                    self.core.set_keys(EXTREMELY_MAGIC_NUMBER)
                 self.core.run_frame()
 
                 display_delta = curr_frame - last_display_frame
@@ -110,7 +99,18 @@ class Emulator(object):
             print("[!!] Error converting frame")
             return []
 
+    def check_directional(self, key):
+        directional_keys = [GBA.KEY_RIGHT, GBA.KEY_UP, GBA.KEY_DOWN, GBA.KEY_LEFT]
+
+        if key not in directional_keys:
+            return
+
+        for dkey in directional_keys:
+            if dkey != key and dkey in self.keys_down:
+                self.key_up(dkey)
+
     def key_down(self, key):
+        self.check_directional(key)
         if key not in self.keys_down:
             self.keys_down.append(key)
 
@@ -118,5 +118,5 @@ class Emulator(object):
         if key in self.keys_down:
             self.keys_down.remove(key)
 
-    def push_key(self, key):
-        self.queue.append(key)
+    def release_keys(self):
+        self.keys_down = []

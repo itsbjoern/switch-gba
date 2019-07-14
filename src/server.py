@@ -51,30 +51,35 @@ class Server(web.Application):
     def thread_function(self, core, path):
         core.run(path)
 
+    def get_rom_data(self, rom):
+        files = os.listdir(self.rom_path)
+        path = os.path.join(self.rom_path, rom)
+        f = open(path, 'rb')
+        f.seek(160)
+        name = f.read(12).decode('utf-8')
+
+        has_save = os.path.exists(os.path.join(self.rom_path, rom[:-4] + ".sav"))
+        save_states = [int(name[-1]) for name in files if name.startswith(rom[:-4] + ".ss")]
+        return {
+            'name': name,
+            'filename': rom,
+            'has_save': has_save,
+            'save_states': save_states,
+            'index': len(self.rom_objects)
+        }
+
     def reload_rom_list(self):
         files = os.listdir(self.rom_path)
         roms = list(filter(lambda x: x.endswith('.gba'), files))
 
         self.rom_objects = []
         for rom in roms:
-            path = os.path.join(self.rom_path, rom)
-            f = open(path, 'rb')
-            f.seek(160)
-            name = f.read(12).decode('utf-8')
-
-            has_save = os.path.exists(os.path.join(self.rom_path, rom[:-4] + ".sav"))
-            self.rom_objects.append({
-                'name': name,
-                'filename': rom,
-                'has_save': has_save,
-                'index': len(self.rom_objects)
-            })
+            self.rom_objects.append(self.get_rom_data(rom))
 
     def load_rom(self, game):
-        if game == self.current_game:
-            return
-
         if self.current_game is not None:
+            if game == self.current_game['filename']:
+                return
             self.emulator.stop()
             self.emulator_thread.join()
 
@@ -82,7 +87,7 @@ class Server(web.Application):
 
         self.emulator_thread = threading.Thread(target=self.thread_function, args=(self.emulator,path,))
         self.emulator_thread.start()
-        self.current_game = game
+        self.current_game = self.get_rom_data(game)
 
     class IndexHandler(web.RequestHandler):
         def get(self):
@@ -116,25 +121,16 @@ class Server(web.Application):
 
             metadata = app.metadata
             metadata['settings'] = {}
+            metadata['rom'] = app.current_game
             metadata['settings']['turbo'] = app.emulator.turbo
             self.write_message(metadata)
 
         def handleKey(self, action, key):
             app = self.application
-            # Assume that b key is pressed until other key is pressed
-            if key == GBA.KEY_B:
-                app.emulator.push_key(int(key))
-                app.emulator.key_down(int(key))
-                return
-            else:
-                app.emulator.key_up(int(key))
-
             if action == "down":
                 app.emulator.key_down(int(key))
             elif action == "up":
                 app.emulator.key_up(int(key))
-            elif action == "press":
-                app.emulator.push_key(int(key))
 
         def handleSetting(self, setting, enabled):
             is_enabled = enabled == "on"
@@ -173,6 +169,7 @@ class Server(web.Application):
             app.clients.remove(self)
             if len(app.clients) == 0:
                 app.emulator.paused = True
+                app.emulator.release_keys()
 
         def check_origin(self, orgin):
             return True
