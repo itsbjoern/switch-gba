@@ -93,10 +93,10 @@ body {
     bottom: 60px;
 }
 
-.savestate {
+.settings {
     position: absolute;
     top: 50px;
-    width: 100px;
+    width: 125px;
 
     left: 0;
     right: 0;
@@ -104,9 +104,14 @@ body {
     color: #f1f1f1;
 }
 
-.savestate .slot-container {
+.setting {
+    padding-bottom: 25px;
+}
+
+.setting .setting-container {
+    overflow: hidden;
+    position: relative;
     margin-top: 8px;
-    font-size: 30px;
     font-weight: bold;
 
     height: 40px;
@@ -115,42 +120,55 @@ body {
     text-align: center;
 
     display: flex;
-    flex-direction: row;
     justify-content: center;
+    flex-direction: row;
     align-items: center;
+    margin-bottom: 10px;
 }
 
-#slot-status {
+.setting .wrap-container {
+    transition: transform 0.5s;
+    display: flex;
+}
+
+.setting.active::after {
+    width: 100%;
+    transition: width .5s;
+}
+
+.setting::after {
+    content: "";
     position: absolute;
     z-index: -10;
-    margin-top: -20px;
-    width: 100px;
+    margin-top: -30px;
+    width: 30px;
     height: 30px;
     border-radius: 0 0 20px 20px;
     background-color: coral;
+    transition: width .5s;
 }
 
-#slot-status.active {
+.setting.enabled::after {
     background-color: greenyellow;
 }
 
-#slot-before, #slot-after {
+.setting-value {
+    font-size: 12px;
+    line-height: 30px;
+    color: #aaaaaa;
+    transition: transform 0.5s, font-size 0.5s, color 0.5s;
+}
+.setting-value.current {
+    font-size: 32px;
+    color: #2c2f33;
+}
+.setting-value.child-1 {
     font-size: 20px;
     color: #4a4a4a;
 }
-
-#slot-before {
-    margin-right: 8px;
-    transform: rotateY(-45deg);
-}
-
-#slot-after {
-    margin-left: 8px;
-    transform: rotateY(45deg);
-}
-
-.savestate p {
-    color: #2c2f33;
+.setting-value.child-2 {
+    font-size: 13px;
+    color: #8a8a8a;
 }
 
 button:focus, input:focus {
@@ -164,21 +182,8 @@ button:focus, input:focus {
     bottom: 0;
 }
 
-.button, .savestate .slot-container {
+.button, .setting-container {
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.5);
-}
-
-.game-settings {
-    position: absolute;
-    width: 150px;
-    top: 250px;
-    padding: 12px;
-    color: white;
-}
-
-.setting {
-    margin-top: 10px;
-    margin-right: 8px;
 }
 
 #pause {

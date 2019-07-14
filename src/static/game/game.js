@@ -22,10 +22,12 @@ var GAMEPAD_MAP = {
 };
 
 var CUSTOM_MAP = {
-  NEXT_STATE: -2,
-  PREV_STATE: -3,
-  RIGHT_BOTTOM_SHOULDER: -4,
-  RIGHT_STICK: -5
+  SETTING_RIGHT: -2,
+  SETTING_LEFT: -3,
+  SETTING_UP: -4,
+  SETTING_DOWN: -5,
+  RIGHT_BOTTOM_SHOULDER: -6,
+  RIGHT_STICK: -7
 };
 
 var AXIS_THRESHOLD_WEAK = 0.3;
@@ -45,34 +47,184 @@ var AXIS_MAP = {
       : null, // up down
   RIGHT_STICK_X: val =>
     val > AXIS_THRESHOLD_STRONG
-    ? "NEXT_STATE"
+    ? "SETTING_RIGHT"
     : val < -AXIS_THRESHOLD_STRONG
-      ? "PREV_STATE"
+      ? "SETTING_LEFT"
       : null,
-  RIGHT_STICK_Y: () => null
+  RIGHT_STICK_Y: val =>
+    val > AXIS_THRESHOLD_STRONG
+    ? "SETTING_DOWN"
+    : val < -AXIS_THRESHOLD_STRONG
+      ? "SETTING_UP"
+      : null,
 };
+
+class Settings {
+  constructor(settings) {
+    this.selectedIndex = 0;
+    this.order = settings.map(s => s.name);
+    this.settings = {};
+
+    for (var index in settings) {
+      var setting = settings[index];
+      this.settings[setting.name] = setting;
+    }
+
+    this.settingsNode = document.getElementById("settings");
+    this.generateDisplay();
+  }
+
+  generateDisplay() {
+    for (var i = 0; i < this.order.length; i++) {
+      var setting = this.getSetting(i);
+
+      var settingNode = document.createElement('div');
+      settingNode.className = "setting" + (i === 0 ? " active" : "");
+      settingNode.id = setting.name;
+
+      var titleNode = document.createElement('h2');
+      titleNode.innerHTML = setting.name;
+      settingNode.appendChild(titleNode);
+
+      var containerNode = document.createElement('div');
+      containerNode.className = "setting-container";
+
+      var wrapContainer = document.createElement('div');
+      wrapContainer.className = "wrap-container";
+      containerNode.appendChild(wrapContainer);
+
+      for (var valueIndex in setting.values) {
+        var value = setting.values[valueIndex];
+        var valueNode = document.createElement('p');
+        valueNode.className = "setting-value";
+        valueNode.className += (valueIndex == 0 ? " current" : " next") + " child-" + Math.abs(valueIndex)
+        valueNode.innerHTML = value;
+
+        wrapContainer.appendChild(valueNode);
+      }
+
+      settingNode.appendChild(containerNode);
+      this.settingsNode.appendChild(settingNode);
+    }
+  }
+
+  updateDisplay() {
+    var activeSetting = this.getSetting(this.selectedIndex);
+    var selectedNode = this.settingsNode.childNodes[this.selectedIndex];
+
+    for (var i in this.order) {
+      var setting = this.getSetting(i);
+      var settingNode = this.settingsNode.childNodes[i];
+      settingNode.className = "setting";
+
+      var listCheck = setting.enabledList && setting.enabledList.indexOf(setting.values[setting.index]) !== -1;
+      if (setting.enabled || listCheck) {
+        settingNode.className += " enabled"
+      }
+
+      if (setting.name === activeSetting.name) {
+        settingNode.className += " active"
+      }
+    }
+
+    var selectedValue = activeSetting.values[activeSetting.index];
+    var currentNode = selectedNode.getElementsByClassName('current')[0];
+    if (currentNode.innerHTML !== "" + selectedValue) {
+      var wrapNode = selectedNode.getElementsByClassName('wrap-container')[0];
+      var offset = 0;
+      for (var i = 0; i < wrapNode.childNodes.length; i++) {
+        var iterNode = wrapNode.childNodes[i];
+        var dist = i - activeSetting.index;
+        var childType = dist === 0
+          ? "current"
+          : dist < 0
+            ? "prev"
+            : "next";
+
+        iterNode.className = "setting-value " + childType + " child-" + Math.abs(dist);
+      }
+    }
+  }
+
+  getSetting(forIndex) {
+    return this.settings[this.order[forIndex]]
+  }
+
+  getSettingByName(name) {
+    return this.settings[name]
+  }
+
+  setCurrentEnabledList(list) {
+    var setting = this.getSetting(this.selectedIndex);
+    setting.enabledList = list;
+    this.updateDisplay();
+  }
+
+  setCurrentEnabled(enabled) {
+    var setting = this.getSetting(this.selectedIndex);
+    setting.enabled = enabled;
+    this.updateDisplay();
+  }
+
+  getCurrentEnabled() {
+    var setting = this.getSetting(this.selectedIndex);
+    return setting.enabled;
+  }
+
+  setEnabledListByName(name, list) {
+    var setting = this.getSettingByName(name);
+    setting.enabledList = list;
+    this.updateDisplay();
+  }
+
+  setEnabledByName(name, enabled) {
+    var setting = this.getSettingByName(name);
+    setting.enabled = enabled;
+    this.updateDisplay();
+  }
+
+  getEnabledByName(name, enabled) {
+    var setting = this.getSettingByName(name);
+    return setting.enabled;
+  }
+
+  selectNextValue() {
+    var setting = this.getSetting(this.selectedIndex);
+    setting.index = Math.min(setting.values.length - 1, setting.index + 1);
+    this.updateDisplay();
+  }
+
+  selectPreviousValue() {
+    var setting = this.getSetting(this.selectedIndex);
+    setting.index = Math.max(0, setting.index - 1);
+    this.updateDisplay();
+  }
+
+  selectNextSetting() {
+    this.selectedIndex = Math.min(this.order.length - 1, this.selectedIndex + 1);
+    this.updateDisplay();
+  }
+
+  selectPreviousSetting() {
+    this.selectedIndex = Math.max(0, this.selectedIndex - 1);
+    this.updateDisplay();
+  }
+
+  getCurrentValue() {
+    var currentSetting = this.getSetting(this.selectedIndex);
+    return currentSetting.values[currentSetting.index];
+  }
+
+  getValueByName(name) {
+    var currentSetting = this.getSettingByName(name);
+    return currentSetting.values[currentSetting.index];
+  }
+}
 
 class UI {
   constructor() {
     this.pause = document.getElementById("pause");
-    this.slot = document.getElementById("slot");
-    this.slotBefore = document.getElementById("slot-before");
-    this.slotAfter = document.getElementById("slot-after");
-    this.slotStatus = document.getElementById("slot-status");
-
-    this.turboCheck = document.getElementById("turbo-setting");
     this.toastContainer = document.getElementById("toast-container");
-  }
-
-  setSaveSlot(slot, hasSave) {
-    this.slotStatus.className =hasSave ? "active" : "";
-    this.slot.innerHTML = slot;
-    this.slotBefore.innerHTML = slot === 0 ? "" : slot - 1;
-    this.slotAfter.innerHTML = slot === 9 ? "" : slot + 1;
-  }
-
-  setTurbo(enabled) {
-    this.turboCheck.checked = enabled;
   }
 
   setPaused(paused) {
@@ -165,10 +317,16 @@ class Game {
     this.ctx = canvas.getContext('2d');
 
     this.ui = new UI();
-    this.settings = {
-      turbo: false,
-      saveSlot: 0
-    };
+    this.settings = new Settings([{
+      name: "Slot",
+      index: 0,
+      values: [0,1,2,3,4,5,6,7,8,9]
+    }, {
+      name: "Turbo",
+      enabled: false,
+      index: 0,
+      values: [2, 5, 10, 20],
+    }])
 
     this.socketConnection = new SocketConnection(window.location.host);
     this.socketConnection.didOpen = this.setPaused.bind(this, false);
@@ -220,7 +378,7 @@ class Game {
             this.setCanvas(json.width, json.height);
             this.updateSettings(json.settings);
             this.rom = json.rom;
-            this.setSaveSlot(this.settings.saveSlot);
+            this.settings.setEnabledListByName("Slot", this.rom.save_states);
             break;
           default:
             break;
@@ -230,7 +388,7 @@ class Game {
   };
 
   updateSettings(settings) {
-    this.setTurbo(settings['turbo']);
+    // this.setTurbo(settings['turbo']);
   }
 
   start() {
@@ -260,43 +418,38 @@ class Game {
     this.ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
   }
 
-  setSaveSlot(slot) {
-    this.settings.saveSlot = Math.min(9, Math.max(0, slot));
-    var hasSave = this.rom.save_states.indexOf(this.settings.saveSlot) !== -1;
-    this.ui.setSaveSlot(this.settings.saveSlot, hasSave);
-  }
-
   saveState() {
-    var hasSave = this.rom.save_states.indexOf(this.settings.saveSlot) !== -1;
+    var slot = this.settings.getValueByName("Slot");
+    var hasSave = this.rom.save_states.indexOf(slot) !== -1;
     if (hasSave) {
-      var confirmed = confirm("Are you sure you want to overwrite the save in slot " + this.settings.saveSlot + "?");
+      var confirmed = confirm("Are you sure you want to overwrite the save in slot " + slot + "?");
       if (!confirmed) {
         return;
       }
     }
 
-    this.socketConnection.send("state-save-" + this.settings.saveSlot);
-    this.ui.showToast("Saved state " + this.settings.saveSlot);
+    this.socketConnection.send("state-save-" + slot);
+    this.ui.showToast("Saved state " + slot);
   }
 
   loadState() {
-    var confirmed = confirm("Are you sure you want to load to save in slot " + this.settings.saveSlot + "?");
+    var slot = this.settings.getValueByName("Slot");
+    var confirmed = confirm("Are you sure you want to load to save in slot " + slot + "?");
     if (!confirmed) {
       return;
     }
-    this.socketConnection.send("state-load-" + this.settings.saveSlot);
+    this.socketConnection.send("state-load-" + slot);
   }
 
   setTurbo(enabled) {
-    if (enabled === this.settings.turbo) {
+    var turboSetting = this.settings.getSettingByName("Turbo");
+    if (enabled === turboSetting.enabled) {
       return;
     }
 
-    this.settings.turbo = enabled;
-    var enabledText = enabled ? "on" : "off";
-    this.socketConnection.send("setting-turbo-" + enabledText);
-
-    this.ui.setTurbo(enabled);
+    this.settings.setEnabledByName("Turbo", enabled);
+    var value = enabled ? this.settings.getValueByName("Turbo") : 1;
+    this.socketConnection.send("setting-turbo-" + value);
   }
 
   reloadEmulator() {
@@ -319,14 +472,24 @@ class Game {
 
   handleCustom(type, action) {
     switch(action) {
-      case "NEXT_STATE":
+      case "SETTING_RIGHT":
         if (type === "up") {
-          this.setSaveSlot(this.settings.saveSlot + 1);
+          this.settings.selectNextValue();
         }
         break;
-      case "PREV_STATE":
+      case "SETTING_LEFT":
         if (type === "up") {
-          this.setSaveSlot(this.settings.saveSlot - 1);
+          this.settings.selectPreviousValue();
+        }
+        break;
+      case "SETTING_UP":
+        if (type === "up") {
+          this.settings.selectPreviousSetting();
+        }
+        break;
+      case "SETTING_DOWN":
+        if (type === "up") {
+          this.settings.selectNextSetting();
         }
         break;
       case "RIGHT_STICK":

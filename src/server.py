@@ -132,10 +132,9 @@ class Server(web.Application):
             elif action == "up":
                 app.emulator.key_up(int(key))
 
-        def handleSetting(self, setting, enabled):
-            is_enabled = enabled == "on"
+        def handleSetting(self, setting, extra):
             if setting == "turbo":
-                self.application.emulator.set_turbo(is_enabled)
+                self.application.emulator.set_turbo(int(extra))
 
         def handleState(self, action, slot):
             app = self.application

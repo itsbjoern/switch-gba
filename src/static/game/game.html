@@ -11,15 +11,7 @@
     </head>
     <body>
         <div class="sidebar sidebar-left">
-            <div class="savestate">
-                <h2>Slot</h2>
-                <div class="slot-container">
-                    <p id="slot-before">0</p>
-                    <p id="slot">1</p>
-                    <p id="slot-after">2</p>
-                </div>
-                <div id="slot-status"></div>
-            </div>
+            <div id="settings" class="settings"></div>
         </div>
         <div class="game">
           <div id="pause">
@@ -31,10 +23,6 @@
           <iframe id="backCapture" src="frame"></iframe>
         </div>
         <div class="sidebar sidebar-right">
-            <div class="game-settings">
-                <h2>Game</h2>
-                <input id="turbo-setting" class="setting" type="checkbox" tabindex="-1" onchange="settingsChange('turbo', event)">Turbo</input>
-            </div>
             <div class="page-controls">
                 <button tabindex="-1" class="reload go-back" onclick="goBack();">Go Back</button>
                 <button tabindex="-1" class="reload reload-emu" onclick="reloadEmulator();">Reset</button>
