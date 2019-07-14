@@ -10,6 +10,59 @@ var KEY_MAP = {
   83: 8, // r
   65: 9, // l
 };
+// window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+try {
+  // var audioCtx = new window.AudioContext({
+  //   latencyHint: 'interactive',
+  //   sampleRate: 44100,
+  // });
+  var win = Object.getOwnPropertyNames( window )
+
+    var url = window.location.origin + '/debug';
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify({
+      data: window['webkitOfflineAudioContext']
+    }));
+
+} catch(e) {
+    var url = window.location.origin + '/debug';
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify({
+      data: e.message
+    }));
+}
+
+
+var source = null;
+var arrBuffer = null;
+var lastBufferSize = 0;
+
+function playSound(buffer) {
+  var loaded = arrBuffer && lastBufferSize > arrBuffer.length;
+  if (loaded) {
+    source.buffer = arrBuffer; 
+    source.connect(audioCtx.destination);
+    source.start(0);
+  }
+  if (source == null || loaded) {
+    source = audioCtx.createBufferSource();
+    arrBuffer = audioCtx.createBuffer(2, audioCtx.sampleRate, audioCtx.sampleRate);
+    lastBufferSize = 0;
+  }
+
+  var chan1 = arrBuffer.getChannelData(0);
+  var chan2 = arrBuffer.getChannelData(1);
+  for (var i = 0; i < buffer.length; i += 2) {
+      chan1[lastBufferSize + i] = buffer[i + 0] / 8192
+      chan2[lastBufferSize + i] = buffer[i + 1] / 8192
+  }
+  lastBufferSize += buffer.length;
+}
 
 class SocketConnection {
   constructor(url) {
@@ -106,6 +159,10 @@ class Game {
           case 'metadata':
             this.setCanvas(json.width, json.height);
             this.updateSettings(json.settings);
+            break;
+          case 'audio':
+            var audio = json.data;
+            playSound(audio);
             break;
           default:
             break;

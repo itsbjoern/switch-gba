@@ -15,6 +15,7 @@ class Emulator(object):
 
         self.fps = 60
         self.core = None
+        self.audio_channels = None
         self.image = None
         self.imageBuf = io.BytesIO()
 
@@ -33,6 +34,7 @@ class Emulator(object):
         self.core.autoload_save()
 
         self.core.reset()
+        self.audio = self.core.get_audio_channels()
 
         self.web_server.set_size(width, height)
         self.enabled = True
@@ -89,6 +91,7 @@ class Emulator(object):
                 display_delta = curr_frame - last_display_frame
                 if display_delta >= 1 / self.fps:
                     self.web_server.emit_frame(self.get_frame())
+                    self.web_server.emit_audio(self.get_audio())
                     last_display_frame = curr_frame
         except Exception as e:
             print(e)
@@ -98,6 +101,9 @@ class Emulator(object):
 
     def set_fps(self, fps):
         self.fps = fps
+
+    def get_audio(self):
+        return self.audio.read(44100)
 
     def get_frame(self):
         try:

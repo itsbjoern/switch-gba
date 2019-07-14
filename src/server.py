@@ -3,6 +3,7 @@ import threading
 import tornado
 import emulator
 import urllib.parse
+import json
 from tornado import websocket, web, ioloop
 from mgba.gba import GBA
 
@@ -194,6 +195,24 @@ class Server(web.Application):
                 pass
 
         tornado.ioloop.IOLoop.current().spawn_callback(stream_frame, self)
+
+    def emit_audio(self, data):
+        if data is None or len(data) <= 0:
+            return
+        audio_msg = json.dumps({
+            'event': 'audio',
+            'data': list(data)
+        })
+
+        @tornado.gen.coroutine
+        def stream_audio(self):
+            try:
+                for client in Server.clients:
+                    yield client.write_message(audio_msg)
+            except Exception as e:
+                pass
+
+        tornado.ioloop.IOLoop.current().spawn_callback(stream_audio, self)
 
 
 if __name__ == '__main__':
