@@ -114,7 +114,8 @@ class SocketConnection {
   }
 
   connect() {
-    this.socket = new WebSocket('ws://' + this.url + '/ws');
+    var protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    this.socket = new WebSocket(protocol + '://' + this.url + '/ws');
     this.socket.onopen = this.onOpen;
     this.socket.onclose = this.onClose;
     this.socket.onmessage = this.messageHandler;
