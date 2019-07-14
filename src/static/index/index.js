@@ -9,6 +9,14 @@ function sendData(data, location) {
   }));
 }
 
+function goBack() {
+  var goBack = confirm("Do you want to leave?");
+  if (!goBack) {
+    return;
+  }
+  window.history.go(-(window.history.length - 1));
+}
+
 function refreshSite() {
   location.reload();
 }

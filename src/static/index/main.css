@@ -34,6 +34,18 @@ body {
   margin: auto;
 }
 
+.backbutton {
+  position: absolute;
+  bottom: 32px;
+  border-radius: 25px;
+  width: 150px;
+  height: 50px;
+  left: 32px;
+  border-width: 0;
+  background-color: #f1f1f1;
+  font-size: 25px;
+}
+
 #rom-list {
   list-style-type: none;
 }

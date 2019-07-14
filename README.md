@@ -63,4 +63,3 @@ To run the server just execute:
 docker run --name switch-gba -d -p 80:8888 -v $(pwd)/roms:/home/roms -d bfriedrichs/switch-gba
 ````
 Then just connect to it from the switch browser.
-
