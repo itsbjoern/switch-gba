@@ -81,6 +81,10 @@ docker run -d -v $(pwd)/roms:/home/roms/ --name switch-gba -p 8888:8888 bfriedri
 ---
 ## Versions
 
+## 1.0.1
+* Add fix for content size warning after alerts are open for too long
+* Minor changes
+
 ## 1.0.0
 * Initial release
 * ROM selection
