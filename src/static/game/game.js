@@ -31,8 +31,6 @@ class SocketConnection {
     this.timeout = null;
 
     this.disconnect = this.disconnect.bind(this);
-    this.onOpen = this.onOpen.bind(this);
-    this.onClose = this.onClose.bind(this);
   }
 
   send(data) {
@@ -42,29 +40,51 @@ class SocketConnection {
     this.socket.send(data);
   }
 
-  connect() {
+  connect(ignoreHandlers) {
+    this.connectAsync(ignoreHandlers);
+  }
+
+  connectAsync(ignoreHandlers) {
     var protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    this.socket = new WebSocket(protocol + "://" + this.url + "/ws");
-    this.socket.onopen = this.onOpen;
-    this.socket.onclose = this.onClose;
-    this.socket.onmessage = this.messageHandler;
+
+    return new Promise(resolve => {
+      if (this.socket) {
+        resolve();
+      }
+      this.socket = new WebSocket(protocol + "://" + this.url + "/ws");
+      this.socket.onopen = this.onOpen.bind(this, resolve, ignoreHandlers);
+      this.socket.onclose = this.onClose.bind(this, null);
+      this.socket.onmessage = this.messageHandler;
+    });
   }
 
-  disconnect() {
-    this.connected = false;
-    this.socket.close();
+  disconnect(ignoreHandlers) {
+    this.disconnectAsync(ignoreHandlers);
   }
 
-  onOpen() {
+  disconnectAsync(ignoreHandlers) {
+    return new Promise(resolve => {
+      if (!this.socket) {
+        resolve();
+      }
+      this.connected = false;
+      this.socket.onclose = this.onClose.bind(this, resolve, ignoreHandlers);
+      this.socket.close();
+    });
+  }
+
+  onOpen(done, ignoreHandlers) {
     this.connected = true;
     this.timeout = setTimeout(this.disconnect, this.timeoutInSeconds * 1000);
-    this.didOpen && this.didOpen();
+    done && done();
+    !ignoreHandlers && this.didOpen && this.didOpen();
   }
 
-  onClose() {
-    this.didClose && this.didClose();
-    clearTimeout(this.timeout);
+  onClose(done, ignoreHandlers) {
     this.socket = null;
+    clearTimeout(this.timeout);
+    done && done();
+    !ignoreHandlers && this.didClose && this.didClose();
   }
 
   resetTimeout() {
@@ -157,7 +177,7 @@ class Game {
             break;
         }
       } catch (err) {
-        sendDebug(err.message);
+        bug(err.message);
       }
     }
   }
@@ -169,8 +189,9 @@ class Game {
   }
 
   start() {
-    this.isRunning = true;
-    this.socketConnection.connect();
+    this.socketConnection.connectAsync().then(() => {
+      this.isRunning = true;
+    });
   }
 
   stop() {
@@ -195,31 +216,44 @@ class Game {
     this.ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
   }
 
+  getConfirmation(message) {
+    return this.socketConnection.disconnectAsync(true).then(() => {
+      var confirmed = confirm(message);
+      return this.socketConnection.connectAsync(true).then(() => {
+        return Promise.resolve(confirmed);
+      });
+    });
+  }
+
   saveState() {
     var slot = this.settings.getSettingByName("Slot").currentValue;
     var hasSave = this.rom.save_states.indexOf(slot) !== -1;
     if (hasSave) {
-      var confirmed = confirm(
+      this.getConfirmation(
         "Are you sure you want to overwrite the save in slot " + slot + "?"
-      );
-      if (!confirmed) {
-        return;
-      }
+      ).then(confirmed => {
+        if (!confirmed) {
+          return;
+        }
+        this.socketConnection.send("state-save-" + slot);
+        this.ui.showToast("Saved state " + slot);
+      });
+    } else {
+      this.socketConnection.send("state-save-" + slot);
+      this.ui.showToast("Saved state " + slot);
     }
-
-    this.socketConnection.send("state-save-" + slot);
-    this.ui.showToast("Saved state " + slot);
   }
 
   loadState() {
     var slot = this.settings.getSettingByName("Slot").currentValue;
-    var confirmed = confirm(
+    this.getConfirmation(
       "Are you sure you want to load to save in slot " + slot + "?"
-    );
-    if (!confirmed) {
-      return;
-    }
-    this.socketConnection.send("state-load-" + slot);
+    ).then(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+      this.socketConnection.send("state-load-" + slot);
+    });
   }
 
   changeTurbo(type, value) {

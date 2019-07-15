@@ -126,8 +126,8 @@ class Settings {
       if (currentNode.innerHTML !== "" + setting.currentValue) {
         var wrapNode = settingNode.getElementsByClassName("wrap-container")[0];
         for (var j = 0; j < wrapNode.childNodes.length; j++) {
-          var iterNode = wrapNode.childNodes[i];
-          var dist = i - setting.index;
+          var iterNode = wrapNode.childNodes[j];
+          var dist = j - setting.index;
           var childType = dist === 0 ? "current" : dist < 0 ? "prev" : "next";
 
           iterNode.className =
