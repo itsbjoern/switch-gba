@@ -20,6 +20,10 @@ body {
     padding: 3px;
 }
 
+#canvas {
+    transform: translateZ(0);
+}
+
 .game, #canvas {
     float: left;
     position: absolute;
@@ -154,16 +158,16 @@ body {
 
 .setting-value {
     font-size: 12px;
-    line-height: 30px;
+    line-height: 34px;
     color: #aaaaaa;
-    transition: transform 0.5s, font-size 0.5s, color 0.5s;
+    transition: transform 0.2s, font-size 0.2s, color 0.2s;
 }
 .setting-value.current {
-    font-size: 32px;
+    font-size: 34px;
     color: #2c2f33;
 }
 .setting-value.child-1 {
-    font-size: 20px;
+    font-size: 18px;
     color: #4a4a4a;
 }
 .setting-value.child-2 {
