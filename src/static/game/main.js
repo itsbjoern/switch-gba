@@ -23,16 +23,16 @@ function reloadEmulator() {
 }
 
 function settingsChange(type, event) {
-  switch(type) {
+  switch (type) {
     case "turbo":
       gameInstance.setTurbo(event.target.checked);
   }
 }
 
-document.addEventListener('DOMContentLoaded', onLoad);
+document.addEventListener("DOMContentLoaded", onLoad);
 
 function onLoad(event) {
-  var canvas = document.getElementById('canvas');
+  var canvas = document.getElementById("canvas");
   gameInstance = new Game(canvas);
   gameInstance.start();
 
@@ -44,7 +44,7 @@ function onLoad(event) {
       if (!backCaptureDidInit) {
         backCaptureDidInit = true;
       }
-      backCapture.src = "frame?x" + Math.random()
+      backCapture.src = "frame?x" + Math.random();
     }
   }
   window.addEventListener("message", recMessage);

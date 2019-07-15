@@ -70,26 +70,29 @@ class Settings {
     for (var i = 0; i < this.order.length; i++) {
       var setting = this.getSetting(i);
 
-      var settingNode = document.createElement('div');
+      var settingNode = document.createElement("div");
       settingNode.className = "setting" + (i === 0 ? " active" : "");
       settingNode.id = setting.name;
 
-      var titleNode = document.createElement('h2');
+      var titleNode = document.createElement("h2");
       titleNode.innerHTML = setting.name;
       settingNode.appendChild(titleNode);
 
-      var containerNode = document.createElement('div');
+      var containerNode = document.createElement("div");
       containerNode.className = "setting-container";
 
-      var wrapContainer = document.createElement('div');
+      var wrapContainer = document.createElement("div");
       wrapContainer.className = "wrap-container";
       containerNode.appendChild(wrapContainer);
 
       for (var valueIndex in setting.values) {
         var value = setting.values[valueIndex];
-        var valueNode = document.createElement('p');
+        var valueNode = document.createElement("p");
         valueNode.className = "setting-value";
-        valueNode.className += (valueIndex == 0 ? " current" : " next") + " child-" + Math.abs(valueIndex)
+        valueNode.className +=
+          (valueIndex == 0 ? " current" : " next") +
+          " child-" +
+          Math.abs(valueIndex);
         valueNode.innerHTML = value;
 
         wrapContainer.appendChild(valueNode);
@@ -108,39 +111,38 @@ class Settings {
       var settingNode = this.settingsNode.childNodes[i];
       settingNode.className = "setting";
 
-      var listCheck = setting.enabledList && setting.enabledList.indexOf(setting.currentValue) !== -1;
+      var listCheck =
+        setting.enabledList &&
+        setting.enabledList.indexOf(setting.currentValue) !== -1;
       if (setting.enabled || listCheck) {
-        settingNode.className += " enabled"
+        settingNode.className += " enabled";
       }
 
       if (setting.name === activeSetting.name) {
-        settingNode.className += " active"
+        settingNode.className += " active";
       }
 
-      var currentNode = settingNode.getElementsByClassName('current')[0];
+      var currentNode = settingNode.getElementsByClassName("current")[0];
       if (currentNode.innerHTML !== "" + setting.currentValue) {
-        var wrapNode = settingNode.getElementsByClassName('wrap-container')[0];
-        for (var i = 0; i < wrapNode.childNodes.length; i++) {
+        var wrapNode = settingNode.getElementsByClassName("wrap-container")[0];
+        for (var j = 0; i < wrapNode.childNodes.length; j++) {
           var iterNode = wrapNode.childNodes[i];
           var dist = i - setting.index;
-          var childType = dist === 0
-            ? "current"
-            : dist < 0
-              ? "prev"
-              : "next";
+          var childType = dist === 0 ? "current" : dist < 0 ? "prev" : "next";
 
-          iterNode.className = "setting-value " + childType + " child-" + Math.abs(dist);
+          iterNode.className =
+            "setting-value " + childType + " child-" + Math.abs(dist);
         }
       }
     }
   }
 
   getSetting(forIndex) {
-    return this.settings[this.order[forIndex]]
+    return this.settings[this.order[forIndex]];
   }
 
   getSettingByName(name) {
-    return this.settings[name]
+    return this.settings[name];
   }
 
   selectNextValue() {
@@ -156,7 +158,10 @@ class Settings {
   }
 
   selectNextSetting() {
-    this.selectedIndex = Math.min(this.order.length - 1, this.selectedIndex + 1);
+    this.selectedIndex = Math.min(
+      this.order.length - 1,
+      this.selectedIndex + 1
+    );
     this.updateDisplay();
   }
 
