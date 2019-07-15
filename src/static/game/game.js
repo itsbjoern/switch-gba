@@ -5,7 +5,7 @@ class UI {
   }
 
   setPaused(paused) {
-    this.pause.style.display = paused ? "block" : "none";
+    this.pause.style.display = paused ? "flex" : "none";
   }
 
   showToast(text) {
@@ -27,7 +27,7 @@ class SocketConnection {
     this.messageHandler = null;
     this.connected = false;
 
-    this.timeoutInSeconds = 10;
+    this.timeoutInSeconds = 2;
     this.timeout = null;
 
     this.disconnect = this.disconnect.bind(this);
@@ -82,7 +82,6 @@ class SocketConnection {
 
   onClose(done, ignoreHandlers) {
     this.socket = null;
-    clearTimeout(this.timeout);
     done && done();
     !ignoreHandlers && this.didClose && this.didClose();
   }
