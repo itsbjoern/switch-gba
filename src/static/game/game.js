@@ -1,74 +1,3 @@
-var GAMEPAD_MAP = {
-  FACE_1: 1, // b
-  FACE_2: 0, // a
-  FACE_3: 15, // y
-  FACE_4: 15, // x
-  LEFT_TOP_SHOULDER: 9, // l
-  LEFT_BOTTOM_SHOULDER: 15,
-  RIGHT_TOP_SHOULDER: 8, // r
-  RIGHT_BOTTOM_SHOULDER: 15,
-  START_FORWARD: 15, // start on switch
-  SELECT_BACK: 15, // select on switch,
-  DPAD_UP: 15,
-  DPAD_DOWN: 2, // select gba
-  DPAD_LEFT: 15,
-  DPAD_RIGHT: 3, // start gba
-  LEFT_STICK: 15,
-  RIGHT_STICK: 15,
-  LEFT_STICK_LEFT: 5,
-  LEFT_STICK_RIGHT: 4,
-  LEFT_STICK_UP: 6,
-  LEFT_STICK_DOWN: 7
-};
-
-var CUSTOM_MAP = {
-  SETTING_RIGHT: -2,
-  SETTING_LEFT: -3,
-  SETTING_UP: -4,
-  SETTING_DOWN: -5,
-  RIGHT_BOTTOM_SHOULDER: -6,
-  RIGHT_STICK: -7
-};
-
-var AXIS_THRESHOLD_WEAK = 0.3;
-var AXIS_THRESHOLD_STRONG = 0.6;
-var AXIS_MAP = {
-  LEFT_STICK_X: val =>
-    val > AXIS_THRESHOLD_WEAK
-    ? "LEFT_STICK_RIGHT"
-    : val < -AXIS_THRESHOLD_WEAK
-      ? "LEFT_STICK_LEFT"
-      : null, // left right
-  LEFT_STICK_Y: val =>
-    val > AXIS_THRESHOLD_WEAK
-    ? "LEFT_STICK_DOWN"
-    : val < -AXIS_THRESHOLD_WEAK
-      ? "LEFT_STICK_UP"
-      : null, // up down
-  RIGHT_STICK_X: val =>
-    val > AXIS_THRESHOLD_STRONG
-    ? "SETTING_RIGHT"
-    : val < -AXIS_THRESHOLD_STRONG
-      ? "SETTING_LEFT"
-      : null,
-  RIGHT_STICK_Y: val =>
-    val > AXIS_THRESHOLD_STRONG
-    ? "SETTING_DOWN"
-    : val < -AXIS_THRESHOLD_STRONG
-      ? "SETTING_UP"
-      : null,
-};
-
-function sendDebug(data) {
-  var url = window.location.origin + '/debug';
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xhr.send(JSON.stringify({
-    data: data
-  }));
-}
-
 class UI {
   constructor() {
     this.pause = document.getElementById("pause");
@@ -76,11 +5,11 @@ class UI {
   }
 
   setPaused(paused) {
-    this.pause.style.display = paused ? "block" : "none";
+    this.pause.style.display = paused ? "flex" : "none";
   }
 
   showToast(text) {
-    var toast = document.createElement('div');
+    var toast = document.createElement("div");
     toast.innerHTML = text;
     toast.className = "toast";
 
@@ -102,8 +31,6 @@ class SocketConnection {
     this.timeout = null;
 
     this.disconnect = this.disconnect.bind(this);
-    this.onOpen = this.onOpen.bind(this);
-    this.onClose = this.onClose.bind(this);
   }
 
   send(data) {
@@ -113,29 +40,50 @@ class SocketConnection {
     this.socket.send(data);
   }
 
-  connect() {
+  connect(ignoreHandlers) {
+    this.connectAsync(ignoreHandlers);
+  }
+
+  connectAsync(ignoreHandlers) {
     var protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    this.socket = new WebSocket(protocol + '://' + this.url + '/ws');
-    this.socket.onopen = this.onOpen;
-    this.socket.onclose = this.onClose;
-    this.socket.onmessage = this.messageHandler;
+
+    return new Promise(resolve => {
+      if (this.socket) {
+        resolve();
+      }
+      this.socket = new WebSocket(protocol + "://" + this.url + "/ws");
+      this.socket.onopen = this.onOpen.bind(this, resolve, ignoreHandlers);
+      this.socket.onclose = this.onClose.bind(this, null);
+      this.socket.onmessage = this.messageHandler;
+    });
   }
 
-  disconnect() {
-    this.connected = false;
-    this.socket.close();
+  disconnect(ignoreHandlers) {
+    this.disconnectAsync(ignoreHandlers);
   }
 
-  onOpen() {
+  disconnectAsync(ignoreHandlers) {
+    return new Promise(resolve => {
+      if (!this.socket) {
+        resolve();
+      }
+      this.connected = false;
+      this.socket.onclose = this.onClose.bind(this, resolve, ignoreHandlers);
+      this.socket.close();
+    });
+  }
+
+  onOpen(done, ignoreHandlers) {
     this.connected = true;
     this.timeout = setTimeout(this.disconnect, this.timeoutInSeconds * 1000);
-    this.didOpen && this.didOpen();
+    done && done();
+    !ignoreHandlers && this.didOpen && this.didOpen();
   }
 
-  onClose() {
-    this.didClose && this.didClose();
-    clearTimeout(this.timeout);
+  onClose(done, ignoreHandlers) {
     this.socket = null;
+    done && done();
+    !ignoreHandlers && this.didClose && this.didClose();
   }
 
   resetTimeout() {
@@ -162,20 +110,23 @@ class SocketConnection {
 class Game {
   constructor(canvas) {
     this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
+    this.ctx = canvas.getContext("2d");
 
     this.ui = new UI();
-    this.settings = new Settings([{
-      name: "Slot",
-      index: 0,
-      values: [0,1,2,3,4,5,6,7,8,9]
-    }, {
-      name: "Turbo",
-      enabled: false,
-      index: 0,
-      values: [2, 5, 10, 20],
-      onChange: this.changeTurbo.bind(this)
-    }])
+    this.settings = new Settings([
+      {
+        name: "Slot",
+        index: 0,
+        values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      },
+      {
+        name: "Turbo",
+        enabled: false,
+        index: 0,
+        values: [2, 5, 10, 20],
+        onChange: this.changeTurbo.bind(this)
+      }
+    ]);
 
     this.socketConnection = new SocketConnection(window.location.host);
     this.socketConnection.didOpen = this.setPaused.bind(this, false);
@@ -213,7 +164,7 @@ class Game {
       try {
         var json = JSON.parse(event.data);
         switch (json.event) {
-          case 'metadata':
+          case "metadata":
             this.setCanvas(json.width, json.height);
             this.updateSettings(json.settings);
             this.rom = json.rom;
@@ -224,19 +175,22 @@ class Game {
           default:
             break;
         }
-      } catch (err) {}
+      } catch (err) {
+        bug(err.message);
+      }
     }
-  };
+  }
 
   updateSettings(settings) {
     var turboSetting = this.settings.getSettingByName("Turbo");
-    var turbo = settings['turbo'];
+    var turbo = settings["turbo"];
     turboSetting.setValue(turbo);
   }
 
   start() {
-    this.isRunning = true;
-    this.socketConnection.connect();
+    this.socketConnection.connectAsync().then(() => {
+      this.isRunning = true;
+    });
   }
 
   stop() {
@@ -261,27 +215,44 @@ class Game {
     this.ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
   }
 
+  getConfirmation(message) {
+    return this.socketConnection.disconnectAsync(true).then(() => {
+      var confirmed = confirm(message);
+      return this.socketConnection.connectAsync(true).then(() => {
+        return Promise.resolve(confirmed);
+      });
+    });
+  }
+
   saveState() {
     var slot = this.settings.getSettingByName("Slot").currentValue;
     var hasSave = this.rom.save_states.indexOf(slot) !== -1;
     if (hasSave) {
-      var confirmed = confirm("Are you sure you want to overwrite the save in slot " + slot + "?");
-      if (!confirmed) {
-        return;
-      }
+      this.getConfirmation(
+        "Are you sure you want to overwrite the save in slot " + slot + "?"
+      ).then(confirmed => {
+        if (!confirmed) {
+          return;
+        }
+        this.socketConnection.send("state-save-" + slot);
+        this.ui.showToast("Saved state " + slot);
+      });
+    } else {
+      this.socketConnection.send("state-save-" + slot);
+      this.ui.showToast("Saved state " + slot);
     }
-
-    this.socketConnection.send("state-save-" + slot);
-    this.ui.showToast("Saved state " + slot);
   }
 
   loadState() {
     var slot = this.settings.getSettingByName("Slot").currentValue;
-    var confirmed = confirm("Are you sure you want to load to save in slot " + slot + "?");
-    if (!confirmed) {
-      return;
-    }
-    this.socketConnection.send("state-load-" + slot);
+    this.getConfirmation(
+      "Are you sure you want to load to save in slot " + slot + "?"
+    ).then(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+      this.socketConnection.send("state-load-" + slot);
+    });
   }
 
   changeTurbo(type, value) {
@@ -322,7 +293,7 @@ class Game {
   }
 
   handleCustom(type, action) {
-    switch(action) {
+    switch (action) {
       case "SETTING_RIGHT":
         if (type === "up") {
           this.settings.selectNextValue();
@@ -358,15 +329,15 @@ class Game {
     var lastAxisKey = this.axis[event.axis];
     var key = AXIS_MAP[event.axis](event.value);
     if (key) {
-      this.keyDown({control: key});
+      this.keyDown({ control: key });
     } else if (lastAxisKey) {
-      this.keyUp({control: lastAxisKey});
+      this.keyUp({ control: lastAxisKey });
     }
     this.axis[event.axis] = key;
   }
 
   onEvent(type, control) {
-    if(!this.isRunning) {
+    if (!this.isRunning) {
       return;
     }
 

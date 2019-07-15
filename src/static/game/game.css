@@ -193,6 +193,7 @@ button:focus, input:focus {
 #pause {
     display: none;
     position: absolute;
+    flex-direction: column;
     left: 0;
     right: 0;
     top: 0;
@@ -206,9 +207,10 @@ button:focus, input:focus {
     font-size: 45px;
     font-weight: bold;
     text-align: center;
-    vertical-align: center;
 
     padding: 80px;
+    justify-content: space-around;
+    align-items: center;
 }
 
 @keyframes show {
