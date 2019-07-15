@@ -73,6 +73,11 @@ bfriedrichs/switch-gba:release-{version}
 
 I'm not distributing any roms, so you will have to make a folder `roms` with your `.gba` files directly in it.
 
+**Example**
+````
+docker run -d -v $(pwd)/roms:/home/roms/ --name switch-gba -p 8888:8888 bfriedrichs/switch-gba:release-latest
+````
+
 ---
 ## Versions
 
