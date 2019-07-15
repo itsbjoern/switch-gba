@@ -27,7 +27,7 @@ class SocketConnection {
     this.messageHandler = null;
     this.connected = false;
 
-    this.timeoutInSeconds = 2;
+    this.timeoutInSeconds = 10;
     this.timeout = null;
 
     this.disconnect = this.disconnect.bind(this);
