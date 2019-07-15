@@ -1,8 +1,3 @@
-var VIEW_CONFIG = {
-  width: 1280,
-  height: 648,
-  sidebarWidth: 154
-};
 var gameInstance = null;
 
 // Capture switch browser to disable accidental unload
