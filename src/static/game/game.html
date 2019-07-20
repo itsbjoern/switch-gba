@@ -5,12 +5,12 @@
         <title>GBA for Nintendo Switch</title>
         <meta charset="utf-8"/>
         <link rel="stylesheet" type="text/css" href="/static/game/game.css">
-        <link rel="stylesheet" type="text/css" href="/static/spinner.css">
-        <script type="text/javascript" src="/static/gamepad.min.js"></script>
-        <script type="text/javascript" src="/static/constants.js"></script>
-        <script type="text/javascript" src="/static/game/settings.js"></script>
-        <script type="text/javascript" src="/static/game/game.js"></script>
-        <script type="text/javascript" src="/static/game/main.js"></script>
+        <link rel="stylesheet" type="text/css" href="/static/game/spinner.css">
+        <script>window.KEY_LAYOUT = {% raw layout %};</script>
+        <script type="text/javascript" src="/static/game/combined.js"></script>
+        <script>
+            window.GameInstance = new Game();
+        </script>
     </head>
     <body>
         <div class="sidebar sidebar-left">
@@ -30,9 +30,9 @@
         </div>
         <div class="sidebar sidebar-right">
             <div class="page-controls">
-                <button tabindex="-1" class="reload go-back" onclick="goBack();">Go Back</button>
-                <button tabindex="-1" class="reload reload-emu" onclick="reloadEmulator();">Reset</button>
-                <button tabindex="-1" class="reload" onclick="location.reload();">Reload page</button>
+                <button tabindex="-1" class="reload go-back" id="backbutton">Go Back</button>
+                <button tabindex="-1" class="reload reload-emu" id="resetbutton">Reset</button>
+                <button tabindex="-1" class="reload" id="reloadbutton">Reload page</button>
             </div>
         </div>
         <div id="toast-container"></div>

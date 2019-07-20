@@ -28,11 +28,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="478.48575"
-     inkscape:cy="913.58581"
+     inkscape:zoom="3.959798"
+     inkscape:cx="87.891371"
+     inkscape:cy="759.6346"
      inkscape:document-units="mm"
-     inkscape:current-layer="g4456"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
      inkscape:window-height="816"
@@ -52,7 +52,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -90,6 +90,13 @@
        inkscape:export-xdpi="75.642929"
        inkscape:export-ydpi="75.642929" />
     <path
+       inkscape:export-ydpi="75.642929"
+       inkscape:export-xdpi="75.642929"
+       inkscape:connector-curvature="0"
+       id="path4929"
+       d="m 43.459179,93.977261 c -2.277817,-0.01951 -3.429078,3.177739 -1.661837,4.614649 1.605284,1.62674 4.687769,0.15822 4.432895,-2.114244 -0.05313,-1.418989 -1.352775,-2.592147 -2.771058,-2.500405 z"
+       style="fill:#f9c300;fill-opacity:1;stroke-width:0.16201057" />
+    <path
        style="fill:#f9c300;fill-opacity:1;stroke-width:0.16201057"
        d="m 46.818702,75.315473 c -3.446531,0.0099 -5.7338,4.310491 -3.814022,7.173942 1.64179,2.999711 6.459156,2.993072 8.091771,-0.01189 1.908654,-2.863991 -0.380262,-7.151922 -3.820817,-7.16205 -0.152214,-0.0076 -0.304727,-0.0076 -0.456932,0 z"
        id="path4342"
@@ -125,7 +132,14 @@
        inkscape:export-xdpi="75.642929"
        inkscape:export-ydpi="75.642929" />
     <path
-       style="fill:#3a3e48;stroke-width:0.16201057"
+       inkscape:export-ydpi="75.642929"
+       inkscape:export-xdpi="75.642929"
+       inkscape:connector-curvature="0"
+       id="path4931"
+       d="m 46.915351,90.521088 c -2.277777,-0.01849 -3.427966,3.176995 -1.661837,4.614647 1.605505,1.626905 4.687178,0.158188 4.432895,-2.114242 -0.05368,-1.419369 -1.352483,-2.591214 -2.771058,-2.500405 z"
+       style="fill:#f9c300;fill-opacity:1;stroke-width:0.16201057" />
+    <path
+       style="fill:#909090;stroke-width:0.16201057;fill-opacity:1"
        id="path4197"
        d="m 49.121027,93.171167 c 0,1.145466 -0.9284,2.073863 -2.073867,2.073863 -1.145459,0 -2.073859,-0.928397 -2.073859,-2.073863 0,-1.145463 0.9284,-2.07386 2.073859,-2.07386 1.145467,0 2.073867,0.928397 2.073867,2.07386 z m 0,0"
        inkscape:connector-curvature="0"
@@ -160,7 +174,7 @@
        inkscape:export-xdpi="75.642929"
        inkscape:export-ydpi="75.642929" />
     <path
-       style="fill:#3a3e48;stroke-width:0.16201057"
+       style="fill:#909090;stroke-width:0.16201057;fill-opacity:1"
        id="path4203"
        d="m 45.664374,96.627184 c 0,1.145463 -0.928392,2.07386 -2.073221,2.07386 -1.145467,0 -2.073867,-0.928397 -2.073867,-2.07386 0,-1.144838 0.9284,-2.073231 2.073867,-2.073231 1.144829,0 2.073221,0.928393 2.073221,2.073231 z m 0,0"
        inkscape:connector-curvature="0"
@@ -287,7 +301,7 @@
              height="45.714287"
              x="-11.071428"
              y="238.23396" /></flowRegion><flowPara
-           id="flowPara4564"></flowPara></flowRoot>    </g>
+           id="flowPara4564" /></flowRoot>    </g>
     <g
        id="g4384"
        transform="matrix(0.28990192,0,0,0.28990192,96.471762,66.366499)"
@@ -295,7 +309,7 @@
        inkscape:export-ydpi="75.642929">
       <path
          style="fill:none;fill-rule:evenodd;stroke:#f9c300;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="m -163.93082,97.779136 -32.24501,-31.967279 -109.58051,0"
+         d="m -175.68544,86.255 -20.49039,-20.443143 -109.58051,0"
          id="path4386"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccc" />
@@ -329,10 +343,11 @@
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.73509312px;font-family:'SF Pro Display';-inkscape-font-specification:'SF Pro Display Bold';fill:#4a4a4a;fill-opacity:1;stroke-width:0.16532169px"
            y="79.288078"
            x="-303.32382"
-           sodipodi:role="line">Start</tspan></text>
+           sodipodi:role="line"
+           dx="0 0 0 0 0 0">Save &amp; Load</tspan></text>
     </g>
     <g
-       transform="matrix(0.28990192,0,0,0.28990192,96.471762,75.132579)"
+       transform="matrix(0.28990192,0,0,0.28990192,96.282774,87.861359)"
        id="g4402"
        inkscape:export-xdpi="75.642929"
        inkscape:export-ydpi="75.642929">
@@ -340,7 +355,7 @@
          sodipodi:nodetypes="ccc"
          inkscape:connector-curvature="0"
          id="path4404"
-         d="m -177.8572,83.07105 -18.31863,-17.259193 -109.58051,0"
+         d="m -175.98871,48.934622 -20.18712,16.877235 -109.58051,0"
          style="fill:none;fill-rule:evenodd;stroke:#f9c300;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          y="65.811859"
@@ -372,7 +387,7 @@
            x="-303.88727"
            y="79.288078"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.73509312px;font-family:'SF Pro Display';-inkscape-font-specification:'SF Pro Display Bold';fill:#4a4a4a;fill-opacity:1;stroke-width:0.16532169px"
-           id="tspan4414">Select</tspan></text>
+           id="tspan4414">Start &amp; Select</tspan></text>
     </g>
     <g
        id="g4416"
@@ -431,12 +446,12 @@
          inkscape:export-xdpi="75.642929"
          inkscape:export-ydpi="75.642929" />
       <rect
-         y="66.268196"
-         x="-305.30002"
-         height="52.42741"
-         width="87.507355"
+         y="65.867165"
+         x="-305.70105"
+         height="29.259264"
+         width="88.30941"
          id="rect4460"
-         style="opacity:1;fill:#f9c300;fill-opacity:1;stroke:#f9c300;stroke-width:3.21427536;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="opacity:1;fill:#f9c300;fill-opacity:1;stroke:#f9c300;stroke-width:2.41221929;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          inkscape:export-xdpi="75.642929"
          inkscape:export-ydpi="75.642929" />
       <text
@@ -471,17 +486,7 @@
          y="93.91172"
          x="183.97607"
          sodipodi:role="line"
-         id="tspan4488">Left / Right: Value</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;font-family:'SF Pro Display';-inkscape-font-specification:'SF Pro Display Bold';fill:#4a4a4a;fill-opacity:1;stroke-width:0.04792708px"
-         y="97.439499"
-         x="183.97607"
-         sodipodi:role="line"
-         id="tspan4566">Press: Save State</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;font-family:'SF Pro Display';-inkscape-font-specification:'SF Pro Display Bold';fill:#4a4a4a;fill-opacity:1;stroke-width:0.04792708px"
-         y="100.96728"
-         x="183.97607"
-         sodipodi:role="line"
-         id="tspan4568">Double: Load State</tspan></text>
+         id="tspan4568">Left / Right: Value</tspan></text>
     <g
        id="g4492"
        transform="matrix(0.17616689,0,0,0.17616689,120.34854,58.42237)"

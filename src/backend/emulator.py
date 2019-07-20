@@ -2,7 +2,7 @@ import mgba.core, mgba.image, mgba.log
 from mgba.gba import GBA
 import io
 import time
-import extend_mgba
+from backend import extend_mgba
 
 # Disable GBA logging
 mgba.log.install_default(mgba.log.NullLogger())

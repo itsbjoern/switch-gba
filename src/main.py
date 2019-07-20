@@ -1,4 +1,4 @@
-import server
+from backend import server
 import tornado.ioloop
 
 if __name__ == '__main__':
