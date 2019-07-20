@@ -17,11 +17,7 @@ LAYOUT_FILE = os.path.join(os.path.dirname(__file__), 'layout.json')
 def load_layout():
     with open(LAYOUT_FILE) as fd:
         loaded = json.load(fd)
-        ret = []
-        for key, value in loaded.items():
-            ret.append({"switchKey": key, "gbaKey": value, "label": ""})
-    save_layout(ret)
-    return loaded
+        return loaded
 
 def save_layout(layout):
     with open(LAYOUT_FILE, 'w') as fd:
