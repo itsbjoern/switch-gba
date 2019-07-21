@@ -5,7 +5,7 @@
 Homebrewing / Hacking a switch is too much of a dangerous affair for me personally and after learning there is a browser I tried to get it running in there. Turns out it is (sort of) possible.
 
 <details>
-  <summary>Preview (UI is changed now)</summary>
+  <summary>Preview (Old UI but still relevant)</summary>
   <img width="500" src="showcase/video_smaller.gif" />
   <p float="left">
   <img width="250" src="showcase/game.jpg" />
@@ -36,22 +36,16 @@ Thanks to the Gamepad API I was able to remove most of the onscreen buttons and 
 
 <img width="600" src="showcase/controls.png" />
 
+Since v1.0.2 custom layouts are also supported. Just click the cogs at the top of the screen during rom selection to open the options menu. The left side shows the GBA key and the right side shows the currently assigned Switch key.
 <details>
-  <summary>In Text</summary>
-  <ul>
-    <li>A / B as usual</li>
-    <li>Left stick for movement</li>
-    <li>DPad right for start</li>
-    <li>DPad down for select</li>
-    <li>Front shoulder buttons for L / R</li>
-    <li>Back right shoulder button for turbo mode while pressed</li>
-    <li>Right stick up / down for selecting values</li>
-    <li>Right stick left / right for selecting values</li>
-    <li>Right stick press for save</li>
-    <li>Right stick double press for load</li>
+  <summary>Developer info</summary>
+  The current layout file is found at `src/backend/layout.json`. A default configuration is always saved at `src/backend/layout.backup.json`, which is also used for the reset.
 </details>
 
-------
+<img width="600" src="showcase/custom.png" />
+
+
+---
 ## Usage
 
 The emulator in it's entirety is ready to be pulled as a docker image. It runs on and exposes port `8888` by default.
@@ -80,6 +74,10 @@ docker run -d -v $(pwd)/roms:/home/roms/ --name switch-gba -p 8888:8888 bfriedri
 
 ---
 ## Versions
+
+## 1.0.2
+* Added custom button layouts
+* Code restructuring
 
 ## 1.0.1
 * Add fix for content size warning after alerts are open for too long
