@@ -8,11 +8,12 @@
   <div class="controlbar">
     <span><button class="icon" id="backButton"><img  width="40" height="40" src="static/assets/back-arrow.svg" /></button></span>
     <span><button class="icon" id="layoutButton"><img  width="40" height="40" src="static/assets/gear.svg" /></button></span>
-    <span><button class="icon" id="refreshButton"><img  width="40" height="40" src="static/assets/refresh.svg" /></button></span>
+    <span><button class="icon" id="refreshButton" onclick="location.reload();"><img  width="40" height="40" src="static/assets/refresh.svg" /></button></span>
   </div>
   <div id="layout" class="controls">
     <div class="head">
       <h1 class="header">Controls</h1>
+      <button id="resetLayout">Reset</button>
     </div>
     <div class="key-list"></div>
   </div>

@@ -20,11 +20,14 @@ class Main {
 
     this.layout = document.getElementById("layout");
     this.layoutButton = document.getElementById("layoutButton");
-    this.refreshButton = document.getElementById("refreshButton");
+    this.resetLayoutButton = document.getElementById("resetLayout");
     this.backButton = document.getElementById("backButton");
 
     this.layoutButton.addEventListener("click", this.toggleLayout.bind(this));
-    this.refreshButton.addEventListener("click", this.refreshSite.bind(this));
+    this.resetLayoutButton.addEventListener(
+      "click",
+      this.resetLayout.bind(this)
+    );
     this.backButton.addEventListener("click", this.goBack.bind(this));
 
     for (var i = 0; i < KEY_LAYOUT.length; i++) {
@@ -62,8 +65,7 @@ class Main {
 
   changeKey(gbaKey, event) {
     var button = event.target;
-    Helper.log(gbaKey)
-    setTimeout(this.setRecording.bind(this, true), 200);
+    setTimeout(this.setRecording.bind(this, true), 150);
     this.currentButton = button;
     this.currentGbaKey = gbaKey;
     var switchKey = button.getElementsByClassName("switch-key")[0];
@@ -82,22 +84,35 @@ class Main {
     this.setKey(key);
   }
 
+  resetLayout() {
+    var confirmed = confirm("Reset all mappings?");
+    if (!confirmed) {
+      return;
+    }
+
+    Helper.post(
+      "layout",
+      {
+        type: "reset"
+      },
+      () => {
+        location.reload();
+      },
+      50
+    );
+  }
+
   setKey(key) {
     if (!this.isRecording) {
       return;
     }
     this.isRecording = false;
 
-    var url = window.location.origin + "/layout";
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhr.send(
-      JSON.stringify({
-        switch_key: key,
-        gba_key: this.currentGbaKey
-      })
-    );
+    Helper.post("layout", {
+      type: "update",
+      switch_key: key,
+      gba_key: this.currentGbaKey
+    });
 
     var switchKey = this.currentButton.getElementsByClassName("switch-key")[0];
     switchKey.innerHTML = Helper.SWITCH_KEY_LABELS[key];
@@ -106,10 +121,6 @@ class Main {
   toggleLayout() {
     var display = this.layout.style.display === "block";
     this.layout.style.display = display ? "none" : "block";
-  }
-
-  refreshSite() {
-    location.reload();
   }
 
   goBack() {

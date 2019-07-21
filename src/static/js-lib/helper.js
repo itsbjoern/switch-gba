@@ -82,12 +82,22 @@
       }
     }
 
-    log() {
+    post(endpoint, data, cb) {
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", "/debug", true);
+      xhr.open("POST", `/${endpoint}`, true);
       xhr.setRequestHeader("Content-Type", "application/json");
+      if (cb) {
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            cb(xhr.responseText);
+          }
+        };
+      }
+      xhr.send(JSON.stringify(data));
+    }
 
-      xhr.send(JSON.stringify({ data: arguments }));
+    log() {
+      this.post("debug", arguments);
     }
   }
   module.Helper = new Helper();
