@@ -12,7 +12,7 @@ class GameHandler(web.RequestHandler):
             self.render('index/index.html', roms=app.rom_objects, layout=app.current_layout)
 
         self.application.load_rom(urllib.parse.unquote(game))
-        self.render('game/game.html', layout=app.current_layout)
+        self.render('game/game.html', layout=app.current_layout, route="game")
 
 class FrameHandler(web.RequestHandler):
     def get(self):

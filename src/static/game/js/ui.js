@@ -30,14 +30,29 @@ class UI {
   }
 
   goBack() {
-    location.href = location.origin;
+    this.gameInstance
+      .getConfirmation(
+        "Are you sure you want to go back to the ROM select screen?"
+      )
+      .then(confirmed => {
+        if (!confirmed) {
+          return;
+        }
+        location.href = location.origin;
+      });
   }
 
   reloadEmulator() {
-    var shouldReload = confirm("Are you sure you want to restart the emulator");
-    if (shouldReload) {
-      this.gameInstance.reloadEmulator();
-    }
+    this.gameInstance
+      .getConfirmation(
+        "Are you sure you want to restart the emulator? Progress will not be saved!"
+      )
+      .then(confirmed => {
+        if (!confirmed) {
+          return;
+        }
+        this.gameInstance.reloadEmulator();
+      });
   }
 
   reload() {

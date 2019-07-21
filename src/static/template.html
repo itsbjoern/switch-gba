@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>GBA for Nintendo Switch</title>
+    <meta charset="utf-8"/>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        background-color: #2c2f33;
+        height: 648px;
+        overflow: hidden;
+      }
+
+      #backCapture {
+        visibility: hidden;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+      }
+    </style>
+    <script>window.KEY_LAYOUT = {% raw layout %};</script>
+    <script type="text/javascript" src="static/{{ route }}/combined.js"></script>
+    {% block head %}{% end %}
+  </head>
+  <body>
+    <iframe id="backCapture" src="frame"></iframe>
+    {% block content %}{% end %}
+  </body>
+</html>

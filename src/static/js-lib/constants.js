@@ -1,7 +1,7 @@
 (function(module) {
   class Constants {
     constructor() {
-      window.onbeforeunload = () => "";
+      document.addEventListener("DOMContentLoaded", this.onLoad.bind(this));
 
       this.VIEW_CONFIG = {
         width: 1280,
@@ -64,6 +64,22 @@
             ? "RIGHT_STICK_UP"
             : null
       };
+    }
+
+    onLoad() {
+      // The switch doesn't send a 'b' press event but rather just returns to the last site
+      this.backCapture = document.getElementById("backCapture");
+      this.backCaptureDidInit = false;
+      window.addEventListener("message", this.captureMessage.bind(this));
+    }
+
+    captureMessage(msg) {
+      if (msg.data === "loaded") {
+        if (!this.backCaptureDidInit) {
+          this.backCaptureDidInit = true;
+        }
+        this.backCapture.src = "frame?x" + Math.random();
+      }
     }
   }
   module.Constants = new Constants();

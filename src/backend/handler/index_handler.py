@@ -6,4 +6,4 @@ class IndexHandler(web.RequestHandler):
         minify.minify("index")
         app = self.application
         app.reload_rom_list()
-        self.render('index/index.html', roms=app.rom_objects, layout=app.current_layout)
+        self.render('index/index.html', roms=app.rom_objects, layout=app.current_layout, route="index")

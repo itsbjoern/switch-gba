@@ -1,42 +1,36 @@
-<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>GBA for Nintendo Switch</title>
-    <meta charset="utf-8"/>
-    <link rel="stylesheet" type="text/css" href="/static/index/index.css">
-    <script>window.KEY_LAYOUT = {% raw layout %};</script>
-    <script type="text/javascript" src="/static/index/combined.js"></script>
-    <script>
-      window.MainBridge = new Main();
-    </script>
-  </head>
-  <body>
-    <div class="controlbar">
-      <span><button class="icon" id="backButton"><img  width="40" height="40" src="static/assets/back-arrow.svg" /></button></span>
-      <span><button class="icon" id="layoutButton"><img  width="40" height="40" src="static/assets/gear.svg" /></button></span>
-      <span><button class="icon" id="refreshButton"><img  width="40" height="40" src="static/assets/refresh.svg" /></button></span>
+{% extends "../template.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="/static/index/index.css">
+  <script>
+    window.MainBridge = new Main();
+  </script>
+{% end %}
+
+{% block content %}
+  <div class="controlbar">
+    <span><button class="icon" id="backButton"><img  width="40" height="40" src="static/assets/back-arrow.svg" /></button></span>
+    <span><button class="icon" id="layoutButton"><img  width="40" height="40" src="static/assets/gear.svg" /></button></span>
+    <span><button class="icon" id="refreshButton"><img  width="40" height="40" src="static/assets/refresh.svg" /></button></span>
+  </div>
+  <div id="layout" class="controls">
+    <div class="head">
+      <h1 class="header">Controls</h1>
     </div>
-    <div id="layout" class="controls">
-      <div class="head">
-        <h1 class="header">Controls</h1>
-      </div>
-      <div class="key-list"></div>
+    <div class="key-list"></div>
+  </div>
+  <div class="content">
+    <div class="head">
+      <h1 class="header">Available roms</h1>
     </div>
-    <div class="content">
-      <div class="head">
-        <h1 class="header">Available roms</h1>
-      </div>
-      <ul id="rom-list">
-        {% for rom in roms %}
-          <button data-filename="{{ rom['filename'] }}" class="rom">
-            <div>
-              {{ escape(rom['name']) }} <span class="filename">({{ escape(rom['filename']) }})</span>
-            </div>
-            <img class="save {% if rom['has_save'] %}has_save{% end %}" width="25" height="25" src="static/assets/save.svg" />
-          </button>
-        {% end %}
-      </ul>
-    </div>
-  </body>
-</html>
+    <ul id="rom-list">
+      {% for rom in roms %}
+        <button data-filename="{{ rom['filename'] }}" class="rom">
+          <div>
+            {{ escape(rom['name']) }} <span class="filename">({{ escape(rom['filename']) }})</span>
+          </div>
+          <img class="save {% if rom['has_save'] %}has_save{% end %}" width="25" height="25" src="static/assets/save.svg" />
+        </button>
+      {% end %}
+    </ul>
+  </div>
+{% end %}

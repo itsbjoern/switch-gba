@@ -1,40 +1,33 @@
-<!doctype html>
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <title>GBA for Nintendo Switch</title>
-        <meta charset="utf-8"/>
-        <link rel="stylesheet" type="text/css" href="/static/game/game.css">
-        <link rel="stylesheet" type="text/css" href="/static/game/spinner.css">
-        <script>window.KEY_LAYOUT = {% raw layout %};</script>
-        <script type="text/javascript" src="/static/game/combined.js"></script>
-        <script>
-            window.GameInstance = new Game();
-        </script>
-    </head>
-    <body>
-        <div class="sidebar sidebar-left">
-            <div id="settings" class="settings"></div>
-        </div>
-        <div class="game">
-            <div id="pause">
-                The game was paused to prevent a size warning.
-                <div class="spinner">
-                    <div class="double-bounce1"></div>
-                    <div class="double-bounce2"></div>
-                </div>
-                Press any key to continue.
-            </div>
-            <canvas id="canvas"></canvas>
-            <iframe id="backCapture" src="frame"></iframe>
-        </div>
-        <div class="sidebar sidebar-right">
-            <div class="page-controls">
-                <button tabindex="-1" class="reload go-back" id="backbutton">Go Back</button>
-                <button tabindex="-1" class="reload reload-emu" id="resetbutton">Reset</button>
-                <button tabindex="-1" class="reload" id="reloadbutton">Reload page</button>
-            </div>
-        </div>
-        <div id="toast-container"></div>
-    </body>
-</html>
+{% extends "../template.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="/static/game/game.css">
+  <link rel="stylesheet" type="text/css" href="/static/game/spinner.css">
+  <script>
+    window.GameInstance = new Game();
+  </script>
+{% end %}
+
+{% block content %}
+  <div class="sidebar sidebar-left">
+    <div id="settings" class="settings"></div>
+  </div>
+  <div class="game">
+    <div id="pause">
+      The game was paused to prevent a size warning.
+      <div class="spinner">
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
+      </div>
+      Press any key to continue.
+    </div>
+    <canvas id="canvas"></canvas>
+  </div>
+  <div class="sidebar sidebar-right">
+    <div class="page-controls">
+      <button tabindex="-1" class="reload go-back" id="backbutton">Go Back</button>
+      <button tabindex="-1" class="reload reload-emu" id="resetbutton">Reset</button>
+      <button tabindex="-1" class="reload" id="reloadbutton">Reload page</button>
+    </div>
+  </div>
+  <div id="toast-container"></div>
+{% end %}

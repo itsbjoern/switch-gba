@@ -31,25 +31,11 @@ class Game {
     this.dblClickHandlers = {};
   }
 
-  captureMessage(msg) {
-    if (msg.data === "loaded") {
-      if (!this.backCaptureDidInit) {
-        this.backCaptureDidInit = true;
-      }
-      this.backCapture.src = "frame?x" + Math.random();
-    }
-  }
-
   onLoad() {
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
 
-    // The switch doesn't send a 'b' press event but rather just returns to the last site
-    this.backCapture = document.getElementById("backCapture");
-    this.backCaptureDidInit = false;
-    window.addEventListener("message", this.captureMessage.bind(this));
-
-    this.ui = new UI();
+    this.ui = new UI(this);
     this.settings = new Settings([
       {
         name: "Slot",
@@ -85,9 +71,7 @@ class Game {
           default:
             break;
         }
-      } catch (err) {
-        bug(err.message);
-      }
+      } catch (err) {}
     }
   }
 
@@ -217,10 +201,9 @@ class Game {
     if (!this.isRunning) {
       return;
     }
-    console.log(type, control)
 
     this.socketConnection.resetTimeout();
-    var key = KEY_LAYOUT[control];
+    var key = KEY_LAYOUT.find(k => k.switchKey === control);
 
     if (key === undefined) {
       return;
@@ -228,7 +211,7 @@ class Game {
     const isStick =
       control.startsWith("LEFT_STICK") || control.startsWith("RIGHT_STICK");
 
-    switch (key) {
+    switch (key.gbaKey) {
       case 10:
         this.setTurbo(type === "down");
         break;
@@ -257,7 +240,7 @@ class Game {
         this.loadState();
         break;
       default:
-        this.socketConnection.send("key-" + type + "-" + key);
+        this.socketConnection.send("key-" + type + "-" + key.gbaKey);
     }
   }
 

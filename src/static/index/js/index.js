@@ -125,7 +125,7 @@ class Main {
     if (!startRom) {
       return;
     }
-    window.onbeforeunload = null;
+
     location.href =
       window.location.origin + "/game?game=" + encodeURIComponent(filename);
   }
