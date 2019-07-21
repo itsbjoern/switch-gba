@@ -1,5 +1,5 @@
 (function(module) {
-  class Constants {
+  class Helper {
     constructor() {
       document.addEventListener("DOMContentLoaded", this.onLoad.bind(this));
 
@@ -81,6 +81,14 @@
         this.backCapture.src = "frame?x" + Math.random();
       }
     }
+
+    log() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/debug", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+
+      xhr.send(JSON.stringify({ data: arguments }));
+    }
   }
-  module.Constants = new Constants();
+  module.Helper = new Helper();
 })(window);

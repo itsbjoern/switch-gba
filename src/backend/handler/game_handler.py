@@ -9,7 +9,7 @@ class GameHandler(web.RequestHandler):
 
         game = self.get_argument("game", None)
         if game is None:
-            self.render('index/index.html', roms=app.rom_objects, layout=app.current_layout)
+            self.render('index/index.html', roms=app.rom_objects, layout=app.current_layout, route="index")
 
         self.application.load_rom(urllib.parse.unquote(game))
         self.render('game/game.html', layout=app.current_layout, route="game")

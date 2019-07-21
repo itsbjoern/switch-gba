@@ -1,7 +1,5 @@
 class Main {
   constructor() {
-    document.addEventListener("DOMContentLoaded", this.onLoad.bind(this));
-
     this.keyDown = this.keyDown.bind(this);
     this.axisChanged = this.axisChanged.bind(this);
     this.gamepad = new Gamepad();
@@ -12,6 +10,8 @@ class Main {
     this.isRecording = false;
     this.currentButton = null;
     this.currentGbaKey = null;
+
+    this.onLoad();
   }
 
   onLoad() {
@@ -41,7 +41,7 @@ class Main {
       gbaKeyNode.innerHTML = key.label;
       var switchKeyNode = document.createElement("div");
       switchKeyNode.className = "switch-key";
-      switchKeyNode.innerHTML = Constants.SWITCH_KEY_LABELS[switchKey];
+      switchKeyNode.innerHTML = Helper.SWITCH_KEY_LABELS[switchKey];
 
       keyNode.appendChild(gbaKeyNode);
       keyNode.appendChild(switchKeyNode);
@@ -62,7 +62,7 @@ class Main {
 
   changeKey(gbaKey, event) {
     var button = event.target;
-
+    Helper.log(gbaKey)
     setTimeout(this.setRecording.bind(this, true), 200);
     this.currentButton = button;
     this.currentGbaKey = gbaKey;
@@ -75,7 +75,7 @@ class Main {
   }
 
   axisChanged(event) {
-    var key = Constants.AXIS_MAP[event.axis](event.value);
+    var key = Helper.AXIS_MAP[event.axis](event.value);
     if (!key) {
       return;
     }
@@ -100,7 +100,7 @@ class Main {
     );
 
     var switchKey = this.currentButton.getElementsByClassName("switch-key")[0];
-    switchKey.innerHTML = Constants.SWITCH_KEY_LABELS[key];
+    switchKey.innerHTML = Helper.SWITCH_KEY_LABELS[key];
   }
 
   toggleLayout() {

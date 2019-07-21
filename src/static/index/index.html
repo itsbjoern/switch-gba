@@ -1,9 +1,7 @@
 {% extends "../template.html" %}
-{% block head %}
-  <link rel="stylesheet" type="text/css" href="/static/index/index.css">
-  <script>
-    window.MainBridge = new Main();
-  </script>
+
+{% block js %}
+  window.MainInstance = new Main();
 {% end %}
 
 {% block content %}

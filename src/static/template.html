@@ -28,9 +28,16 @@
         height: 1px;
       }
     </style>
+    <link rel="stylesheet" type="text/css" href="/static/{{ route }}/{{ route }}.css">
+
     <script>window.KEY_LAYOUT = {% raw layout %};</script>
-    <script type="text/javascript" src="static/{{ route }}/combined.js"></script>
-    {% block head %}{% end %}
+    <script src="/static/{{ route }}/combined.js"></script>
+    {% block styles %}{% end %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        {% block js %}{% end %}
+      });
+    </script>
   </head>
   <body>
     <iframe id="backCapture" src="frame"></iframe>

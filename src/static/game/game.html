@@ -1,10 +1,11 @@
 {% extends "../template.html" %}
-{% block head %}
-  <link rel="stylesheet" type="text/css" href="/static/game/game.css">
+
+{% block styles %}
   <link rel="stylesheet" type="text/css" href="/static/game/spinner.css">
-  <script>
-    window.GameInstance = new Game();
-  </script>
+{% end %}
+
+{% block js %}
+  window.GameInstance = new Game();
 {% end %}
 
 {% block content %}

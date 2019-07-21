@@ -21,16 +21,12 @@
   width: 750px;
   margin: auto;
   background-color: #2c2f33;
+  padding-bottom: 32px;
 }
 
 .controls {
   z-index: 100;
   display: none;
-}
-
-.key-list {
-  height: 400px;
-  overflow: scroll;
 }
 
 .switch-key {

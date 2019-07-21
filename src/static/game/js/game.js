@@ -1,7 +1,5 @@
 class Game {
   constructor() {
-    document.addEventListener("DOMContentLoaded", this.onLoad.bind(this));
-
     this.socketConnection = new SocketConnection(window.location.host);
     this.socketConnection.didOpen = this.setPaused.bind(this, false);
     this.socketConnection.didClose = this.setPaused.bind(this, true);
@@ -29,6 +27,7 @@ class Game {
     this.gamepad.bind(Gamepad.Event.AXIS_CHANGED, this.axisChanged);
 
     this.dblClickHandlers = {};
+    this.onLoad();
   }
 
   onLoad() {
@@ -57,21 +56,19 @@ class Game {
     if (event.data instanceof Blob) {
       this.image.src = URL.createObjectURL(event.data);
     } else {
-      try {
-        var json = JSON.parse(event.data);
-        switch (json.event) {
-          case "metadata":
-            this.setCanvas(json.width, json.height);
-            this.updateSettings(json.settings);
-            this.rom = json.rom;
+      var json = JSON.parse(event.data);
+      switch (json.event) {
+        case "metadata":
+          this.setCanvas(json.width, json.height);
+          this.updateSettings(json.settings);
+          this.rom = json.rom;
 
-            var slotSetting = this.settings.getSettingByName("Slot");
-            slotSetting.setEnabledList(this.rom.save_states);
-            break;
-          default:
-            break;
-        }
-      } catch (err) {}
+          var slotSetting = this.settings.getSettingByName("Slot");
+          slotSetting.setEnabledList(this.rom.save_states);
+          break;
+        default:
+          break;
+      }
     }
   }
 
@@ -188,7 +185,7 @@ class Game {
 
   axisChanged(event) {
     var lastAxisKey = this.axis[event.axis];
-    var key = Constants.AXIS_MAP[event.axis](event.value);
+    var key = Helper.AXIS_MAP[event.axis](event.value);
     if (key) {
       this.keyDown({ control: key });
     } else if (lastAxisKey) {
@@ -208,35 +205,38 @@ class Game {
     if (key === undefined) {
       return;
     }
-    const isStick =
+
+    var isStick =
       control.startsWith("LEFT_STICK") || control.startsWith("RIGHT_STICK");
+    var isSinglePress =
+      (isStick && type === "up") || (!isStick && type === "down");
 
     switch (key.gbaKey) {
       case 10:
         this.setTurbo(type === "down");
         break;
       case 11:
-        if (isStick && type !== "up") break;
+        if (!isSinglePress) break;
         this.settings.selectPreviousSetting();
         break;
       case 12:
-        if (isStick && type !== "up") break;
+        if (!isSinglePress) break;
         this.settings.selectNextSetting();
         break;
       case 13:
-        if (isStick && type !== "up") break;
+        if (!isSinglePress) break;
         this.settings.selectNextValue();
         break;
       case 14:
-        if (isStick && type !== "up") break;
+        if (!isSinglePress) break;
         this.settings.selectPreviousValue();
         break;
       case 15:
-        if (isStick && type !== "up") break;
+        if (!isSinglePress) break;
         this.saveState();
         break;
       case 16:
-        if (isStick && type !== "up") break;
+        if (!isSinglePress) break;
         this.loadState();
         break;
       default:
